@@ -7,9 +7,10 @@ import { notFound } from "next/navigation";
 export default async function MeetingPage({ 
   params 
 }: { 
-  params: { id: string } 
+  params: Promise<{ id: string }> 
 }) {
-  const meeting = await getMeetingById(params.id);
+  const { id } = await params;
+  const meeting = await getMeetingById(id);
 
   if (!meeting) {
     notFound();
