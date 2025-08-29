@@ -1,6 +1,6 @@
 ---
 name: drizzle-migration-manager
-description: Proactively use this agent when database schema changes have been made and need to be migrated to Supabase using Drizzle ORM's code-first approach. Examples: <example>Context: User has modified database schema files and needs to apply changes to Supabase. user: 'I just updated the users table schema to add a new email_verified column. Can you handle the migration?' assistant: 'I'll use the drizzle-migration-manager agent to generate and apply the necessary migration for your schema changes.' <commentary>Since schema changes were made, use the drizzle-migration-manager agent to handle the complete migration process.</commentary></example> <example>Context: User has created new tables in their schema and wants to migrate. user: 'I've added three new tables for the messaging feature - conversations, messages, and participants. Please migrate these to the database.' assistant: 'Let me use the drizzle-migration-manager agent to generate and execute the migrations for your new messaging tables.' <commentary>New tables require migration, so use the drizzle-migration-manager agent to handle the database updates.</commentary></example>
+description: Database migration expert for Drizzle ORM and Supabase. Use proactively for schema changes and migrations with Drizzle’s code-first workflow.
 tools: Glob, Grep, LS, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash, Edit, MultiEdit, Write, NotebookEdit
 model: sonnet
 color: blue
