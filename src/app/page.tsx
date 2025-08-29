@@ -27,14 +27,21 @@ export default async function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={createMeeting} className="flex gap-4">
-              <Input
-                name="meeting_url"
-                placeholder="Enter meeting URL"
-                required
-                className="flex-1"
-              />
-              <Button type="submit">Create Meeting</Button>
+            <form action={createMeeting} className="space-y-4">
+              <div className="space-y-2">
+                <Input
+                  name="title"
+                  placeholder="Meeting title (optional)"
+                  className="w-full"
+                />
+                <Input
+                  name="meeting_url"
+                  placeholder="Enter meeting URL"
+                  required
+                  className="w-full"
+                />
+              </div>
+              <Button type="submit" className="w-full">Create Meeting</Button>
             </form>
           </CardContent>
         </Card>
@@ -55,7 +62,9 @@ export default async function Home() {
               {meetings.map((meeting) => (
                 <Card key={meeting.id}>
                   <CardHeader>
-                    <CardTitle className="text-lg">Meeting {meeting.id.slice(0, 8)}</CardTitle>
+                    <CardTitle className="text-lg">
+                      {meeting.title || `Meeting ${meeting.id.slice(0, 8)}`}
+                    </CardTitle>
                     <CardDescription>
                       Created: {new Date(meeting.createdAt).toLocaleString()}
                     </CardDescription>

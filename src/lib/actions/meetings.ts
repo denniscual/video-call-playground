@@ -33,6 +33,7 @@ export async function getMeetingById(id: string): Promise<Meeting | null> {
 
 export async function createMeeting(formData: FormData) {
   const meetingUrl = formData.get("meeting_url") as string;
+  const title = formData.get("title") as string;
 
   if (!meetingUrl) {
     throw new Error("Meeting URL is required");
@@ -40,6 +41,7 @@ export async function createMeeting(formData: FormData) {
 
   try {
     await db.insert(meetings).values({
+      title: title || null,
       meetingUrl,
     });
     revalidatePath("/");

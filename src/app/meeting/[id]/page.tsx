@@ -21,7 +21,9 @@ export default async function MeetingPage({
       <div className="space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Meeting Details</h1>
+            <h1 className="text-3xl font-bold">
+              {meeting.title || "Meeting Details"}
+            </h1>
             <p className="text-muted-foreground mt-2">
               View and manage this meeting
             </p>
@@ -33,7 +35,9 @@ export default async function MeetingPage({
 
         <Card>
           <CardHeader>
-            <CardTitle>Meeting {meeting.id.slice(0, 8)}</CardTitle>
+            <CardTitle>
+              {meeting.title || `Meeting ${meeting.id.slice(0, 8)}`}
+            </CardTitle>
             <CardDescription>
               Created: {new Date(meeting.createdAt).toLocaleString()}
             </CardDescription>
@@ -51,6 +55,12 @@ export default async function MeetingPage({
             <div>
               <h3 className="text-lg font-medium mb-2">Meeting Information</h3>
               <div className="grid grid-cols-2 gap-4">
+                {meeting.title && (
+                  <div className="col-span-2">
+                    <p className="text-sm font-medium text-muted-foreground">Title</p>
+                    <p className="text-sm">{meeting.title}</p>
+                  </div>
+                )}
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Meeting ID</p>
                   <p className="font-mono text-sm">{meeting.id}</p>
