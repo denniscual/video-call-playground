@@ -1,7 +1,8 @@
-import { getAllMeetings, createMeeting, deleteMeeting } from "@/lib/actions/meetings";
+import { getAllMeetings } from "@/lib/actions/meetings";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CreateMeetingForm } from "@/components/create-meeting-form";
+import { DeleteMeetingButton } from "@/components/delete-meeting-button";
 import Link from "next/link";
 
 export default async function Home() {
@@ -17,7 +18,6 @@ export default async function Home() {
           </p>
         </div>
 
-
         {/* Create Meeting Form */}
         <Card>
           <CardHeader>
@@ -27,22 +27,7 @@ export default async function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={createMeeting} className="space-y-4">
-              <div className="space-y-2">
-                <Input
-                  name="title"
-                  placeholder="Meeting title (optional)"
-                  className="w-full"
-                />
-                <Input
-                  name="meeting_url"
-                  placeholder="Enter meeting URL"
-                  required
-                  className="w-full"
-                />
-              </div>
-              <Button type="submit" className="w-full">Create Meeting</Button>
-            </form>
+            <CreateMeetingForm />
           </CardContent>
         </Card>
 
@@ -81,11 +66,7 @@ export default async function Home() {
                         <Button asChild variant="outline" size="sm">
                           <Link href={`/meeting/${meeting.id}`}>View</Link>
                         </Button>
-                        <form action={deleteMeeting.bind(null, meeting.id)}>
-                          <Button type="submit" variant="destructive" size="sm">
-                            Delete
-                          </Button>
-                        </form>
+                        <DeleteMeetingButton meetingId={meeting.id} />
                       </div>
                     </div>
                   </CardContent>
