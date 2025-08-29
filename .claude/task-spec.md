@@ -6,6 +6,7 @@
   - Project URL: https://wpggkfbcmekytsjcrrma.supabase.co
   - API KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwZ2drZmJjbWVreXRzamNycm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NzM2OTcsImV4cCI6MjA3MjA0OTY5N30.LCDjzr46d56BVRD0LTjPJdzS-9iNMuvG4bY5dN-N8YM
 - Use Drizzle for ORM
+- Shadcn for UI Components
 
 ## Architecture
 
@@ -22,6 +23,15 @@ will be shared to other attendees. Participants retrieves the meeting and then j
 ### Drizzle
 
 Make sure to use drizzle ORM to interact with the supabase db. Use this docs on how to setup supabase + drizzle https://supabase.com/docs/guides/database/drizzle
+
+#### Migration Strategy
+
+For Drizzle migrations, we are using the **Codebase First** strategy:
+
+- Define database schema in TypeScript using Drizzle schema definitions
+- Generate migration files from the schema using `drizzle-kit generate`
+- Apply migrations to the database using `drizzle-kit push` or `drizzle-kit migrate`
+- Documentation: https://orm.drizzle.team/docs/migrations
 
 ## Basic Requirements
 

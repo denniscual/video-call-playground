@@ -6,9 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 
-- `pnpm dev` - Start the development server with Turbopack
-- `pnpm build` - Build the application for production with Turbopack
-- `pnpm start` - Start the production server
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm typecheck` - Run TypeScript type checking
+- `pnpm db:generate` - Generate Drizzle migrations
+- `pnpm db:push` - Push schema to database
+- `pnpm db:migrate` - Run migrations
 
 Note: This project uses `pnpm` as the package manager (indicated by `pnpm-lock.yaml`).
 
