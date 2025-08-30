@@ -12,6 +12,7 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
+		"@aws-sdk/client-chime-sdk-meetings": "^3.879.0",
 		"@radix-ui/react-slot": "^1.2.3",
 		"@supabase/supabase-js": "^2.56.0",
 		"class-variance-authority": "^0.7.1",
