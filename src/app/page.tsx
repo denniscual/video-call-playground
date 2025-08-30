@@ -1,5 +1,5 @@
-import { getAllMeetings, createMeeting } from "@/lib/actions/meetings";
-import { Button } from "@/components/ui/button";
+import { getAllMeetings } from "@/lib/actions/meetings";
+import { CreateChimeMeetingForm } from "@/components/create-chime-meeting-form";
 import {
 	Card,
 	CardContent,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { DeleteMeetingButton } from "@/components/delete-meeting-button";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function Home() {
 	const meetings = await getAllMeetings();
@@ -32,9 +33,7 @@ export default async function Home() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<form action={createMeeting}>
-							<Button type="submit">Create meeting</Button>
-						</form>
+						<CreateChimeMeetingForm />
 					</CardContent>
 				</Card>
 
