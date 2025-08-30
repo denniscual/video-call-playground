@@ -1,5 +1,4 @@
-import { getAllMeetings } from "@/lib/actions/meetings";
-import { createChimeMeeting } from "@/lib/actions/chime-meetings";
+import { getAllMeetings, createMeeting } from "@/lib/actions/meetings";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -47,7 +46,7 @@ export default async function Home() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<form action={createChimeMeeting}>
+						<form action={createMeeting}>
 							<Button type="submit">Create AWS Chime Meeting</Button>
 						</form>
 					</CardContent>
@@ -70,7 +69,7 @@ export default async function Home() {
 								<Card key={meeting.id}>
 									<CardHeader>
 										<CardTitle className="text-lg">
-											{meeting.title || `Meeting ${meeting.id.slice(0, 8)}`}
+											{meeting.externalMeetingId || `Meeting ${meeting.id.slice(0, 8)}`}
 										</CardTitle>
 										<CardDescription>
 											Created: {new Date(meeting.createdAt).toLocaleString()}
@@ -79,9 +78,9 @@ export default async function Home() {
 									<CardContent>
 										<div className="flex items-center justify-between">
 											<div className="flex-1 min-w-0">
-												<p className="text-sm font-medium">Meeting URL:</p>
+												<p className="text-sm font-medium">Meeting ID:</p>
 												<p className="text-sm text-muted-foreground truncate">
-													{meeting.meetingUrl}
+													{meeting.meetingId}
 												</p>
 											</div>
 											<div className="flex gap-2 ml-4">

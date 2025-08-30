@@ -8,6 +8,13 @@
       "when": 1756480520456,
       "tag": "0000_red_starjammers",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1756547031257,
+      "tag": "0001_perfect_sage",
+      "breakpoints": true
     }
   ]
 }

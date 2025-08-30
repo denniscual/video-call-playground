@@ -1,6 +1,6 @@
 "use client";
 
-import { createMeeting } from "@/lib/actions/meetings";
+import { createLegacyMeeting } from "@/lib/actions/meetings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -9,7 +9,7 @@ import { useActionState } from "react";
 export function CreateMeetingForm() {
   const [, formAction, isPending] = useActionState(
     async (_: null, formData: FormData) => {
-      await createMeeting(formData);
+      await createLegacyMeeting(formData);
       return _;
     },
     null,
