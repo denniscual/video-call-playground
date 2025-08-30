@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { meetings, attendees, participants } from "@/lib/db/schema";
+import { meetings, attendees } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import {
@@ -11,7 +11,7 @@ import {
 import { getChimeSDKMeetingsClient } from "@/lib/aws/chime-client";
 import { v4 as uuidv4 } from "uuid";
 import { capitalToLower } from "@/lib/utils/case-transform";
-import type { Meeting, Attendee, Participant } from "@/lib/db/schema";
+import type { Meeting } from "@/lib/db/schema";
 
 export async function getAllMeetings(): Promise<Meeting[]> {
 	try {
