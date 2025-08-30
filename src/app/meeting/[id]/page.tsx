@@ -25,7 +25,7 @@ export default async function MeetingPage({
               {meeting.externalMeetingId || "Meeting Details"}
             </h1>
             <p className="text-muted-foreground mt-2">
-              View and manage this meeting
+              View meeting details • {meeting.attendees?.length || 0} attendee(s)
             </p>
           </div>
           <Button asChild variant="outline">
@@ -57,11 +57,31 @@ export default async function MeetingPage({
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <p className="text-sm font-medium text-muted-foreground">External Meeting ID</p>
-                  <p className="text-sm">{meeting.externalMeetingId}</p>
+                  <p className="text-sm font-mono">{meeting.externalMeetingId}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Meeting ID</p>
-                  <p className="font-mono text-sm">{meeting.id}</p>
+                  <p className="text-sm font-medium text-muted-foreground">AWS Chime Meeting ID</p>
+                  <p className="font-mono text-xs">{meeting.meetingId}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Database ID</p>
+                  <p className="font-mono text-xs">{meeting.id}</p>
+                </div>
+                {meeting.mediaRegion && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Media Region</p>
+                    <p className="text-sm">{meeting.mediaRegion}</p>
+                  </div>
+                )}
+                {meeting.meetingHostId && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Meeting Host ID</p>
+                    <p className="font-mono text-xs">{meeting.meetingHostId}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Created</p>
+                  <p className="text-sm">{new Date(meeting.createdAt).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Last Updated</p>
@@ -78,6 +98,63 @@ export default async function MeetingPage({
                 <Link href="/">Back to Home</Link>
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Attendees Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Meeting Attendees ({meeting.attendees?.length || 0})</CardTitle>
+            <CardDescription>
+              Participants in this meeting
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!meeting.attendees || meeting.attendees.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No attendees found for this meeting.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {meeting.attendees.map((attendee, index) => (
+                  <div key={attendee.id} className="border rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium">
+                            {attendee.participant?.name || `Attendee ${index + 1}`}
+                          </h4>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            attendee.participant?.type === 'host' 
+                              ? 'bg-blue-100 text-blue-800' 
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {attendee.participant?.type === 'host' ? 'Host' : 'Participant'}
+                          </span>
+                        </div>
+                        {attendee.attendeeId && (
+                          <div>
+                            <p className="text-xs text-muted-foreground">Attendee ID</p>
+                            <p className="font-mono text-xs">{attendee.attendeeId}</p>
+                          </div>
+                        )}
+                        {attendee.joinToken && (
+                          <div>
+                            <p className="text-xs text-muted-foreground">Join Token</p>
+                            <p className="font-mono text-xs truncate max-w-xs">
+                              {attendee.joinToken.substring(0, 20)}...
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Added: {new Date(attendee.createdAt).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
