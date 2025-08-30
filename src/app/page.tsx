@@ -7,7 +7,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { CreateMeetingForm } from "@/components/create-meeting-form";
 import { DeleteMeetingButton } from "@/components/delete-meeting-button";
 import Link from "next/link";
 
@@ -24,19 +23,6 @@ export default async function Home() {
 					</p>
 				</div>
 
-				{/* Create Meeting Form */}
-				<Card>
-					<CardHeader>
-						<CardTitle>Create New Meeting</CardTitle>
-						<CardDescription>
-							Add a new meeting URL to start a video call session
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<CreateMeetingForm />
-					</CardContent>
-				</Card>
-
 				{/* AWS Chime Meeting Creation */}
 				<Card>
 					<CardHeader>
@@ -47,7 +33,7 @@ export default async function Home() {
 					</CardHeader>
 					<CardContent>
 						<form action={createMeeting}>
-							<Button type="submit">Create AWS Chime Meeting</Button>
+							<Button type="submit">Create meeting</Button>
 						</form>
 					</CardContent>
 				</Card>
@@ -69,7 +55,8 @@ export default async function Home() {
 								<Card key={meeting.id}>
 									<CardHeader>
 										<CardTitle className="text-lg">
-											{meeting.externalMeetingId || `Meeting ${meeting.id.slice(0, 8)}`}
+											{meeting.externalMeetingId ||
+												`Meeting ${meeting.id.slice(0, 8)}`}
 										</CardTitle>
 										<CardDescription>
 											Created: {new Date(meeting.createdAt).toLocaleString()}
