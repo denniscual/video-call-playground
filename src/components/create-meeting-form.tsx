@@ -4,21 +4,19 @@ import { createMeeting } from "@/lib/actions/meetings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { useTransition, useRef } from "react";
+import { useActionState } from "react";
 
 export function CreateMeetingForm() {
-  const [isPending, startTransition] = useTransition();
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const handleSubmit = (formData: FormData) => {
-    startTransition(async () => {
+  const [, formAction, isPending] = useActionState(
+    async (_: null, formData: FormData) => {
       await createMeeting(formData);
-      formRef.current?.reset();
-    });
-  };
+      return _;
+    },
+    null,
+  );
 
   return (
-    <form ref={formRef} action={handleSubmit} className="space-y-4">
+    <form action={formAction} className="space-y-4">
       <div className="space-y-2">
         <Input
           name="title"
