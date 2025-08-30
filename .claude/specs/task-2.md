@@ -328,3 +328,8 @@ Tasks:
       name: string (optional) // name of the participant
   }
   ```
+
+#### UI: Update the specific meeting page
+
+- update the meeting page to show the new information- meeting and the attendees.
+- make sure to show the meeting information and the attendees. just show the relavant information.
