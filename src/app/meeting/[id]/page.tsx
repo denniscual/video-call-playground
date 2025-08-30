@@ -22,7 +22,7 @@ export default async function MeetingPage({
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">
-              {meeting.title || "Meeting Details"}
+              {meeting.externalMeetingId || "Meeting Details"}
             </h1>
             <p className="text-muted-foreground mt-2">
               View and manage this meeting
@@ -36,7 +36,7 @@ export default async function MeetingPage({
         <Card>
           <CardHeader>
             <CardTitle>
-              {meeting.title || `Meeting ${meeting.id.slice(0, 8)}`}
+              {meeting.externalMeetingId || `Meeting ${meeting.id.slice(0, 8)}`}
             </CardTitle>
             <CardDescription>
               Created: {new Date(meeting.createdAt).toLocaleString()}
@@ -44,10 +44,10 @@ export default async function MeetingPage({
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h3 className="text-lg font-medium mb-2">Meeting URL</h3>
+              <h3 className="text-lg font-medium mb-2">Meeting ID</h3>
               <div className="p-4 bg-muted rounded-lg">
                 <p className="font-mono text-sm break-all">
-                  {meeting.meetingUrl}
+                  {meeting.meetingId}
                 </p>
               </div>
             </div>
@@ -55,12 +55,10 @@ export default async function MeetingPage({
             <div>
               <h3 className="text-lg font-medium mb-2">Meeting Information</h3>
               <div className="grid grid-cols-2 gap-4">
-                {meeting.title && (
-                  <div className="col-span-2">
-                    <p className="text-sm font-medium text-muted-foreground">Title</p>
-                    <p className="text-sm">{meeting.title}</p>
-                  </div>
-                )}
+                <div className="col-span-2">
+                  <p className="text-sm font-medium text-muted-foreground">External Meeting ID</p>
+                  <p className="text-sm">{meeting.externalMeetingId}</p>
+                </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Meeting ID</p>
                   <p className="font-mono text-sm">{meeting.id}</p>
@@ -73,14 +71,8 @@ export default async function MeetingPage({
             </div>
 
             <div className="flex gap-4 pt-4">
-              <Button asChild className="flex-1">
-                <a 
-                  href={meeting.meetingUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  Join Meeting
-                </a>
+              <Button className="flex-1" disabled>
+                Join Meeting (Not Available)
               </Button>
               <Button asChild variant="outline">
                 <Link href="/">Back to Home</Link>
