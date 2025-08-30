@@ -78,6 +78,16 @@ export async function createMeeting() {
 	try {
 		const client = getChimeSDKMeetingsClient();
 		const region = process.env.NEXT_PUBLIC_AWS_CHIME_REGION!;
+		// TODO: Replace this with dynamic data.
+		// This data is coming from the actual participatns table data.
+		const hardcodedParticipants = {
+			host: {
+				id: "763e07ad-2d49-4dab-8d5f-fb0b505da275",
+			},
+			nonHost: {
+				id: "76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe",
+			},
+		};
 
 		const meetingInput = {
 			ClientRequestToken: uuidv4(),
@@ -92,25 +102,45 @@ export async function createMeeting() {
 			throw new Error("Failed to create meeting - no MeetingId returned");
 		}
 
-		const attendeeInput = {
+		// Create host
+		const hostAttendeeInput = {
 			MeetingId: meetingResponse.Meeting.MeetingId,
-			ExternalUserId: uuidv4(),
+			ExternalUserId: hardcodedParticipants.host.id,
 			Capabilities: {
 				Audio: "SendReceive" as const,
 				Video: "SendReceive" as const,
 				Content: "SendReceive" as const,
 			},
 		};
+		const hostAttendeeResponse = await client.send(
+			new CreateAttendeeCommand(hostAttendeeInput),
+		);
 
-		const createAttendeeCommand = new CreateAttendeeCommand(attendeeInput);
-		const attendeeResponse = await client.send(createAttendeeCommand);
+		// Create non-host
+		const nonHostAttendeeInput = {
+			MeetingId: meetingResponse.Meeting.MeetingId,
+			ExternalUserId: hardcodedParticipants.nonHost.id,
+			Capabilities: {
+				Audio: "SendReceive" as const,
+				Video: "SendReceive" as const,
+				Content: "SendReceive" as const,
+			},
+		};
+		const nonHostAttendeeResponse = await client.send(
+			new CreateAttendeeCommand(nonHostAttendeeInput),
+		);
 
-		if (!attendeeResponse.Attendee) {
+		if (!hostAttendeeResponse.Attendee || !nonHostAttendeeResponse.Attendee) {
 			throw new Error("Failed to create attendee");
 		}
 
 		const transformedMeeting = capitalToLower(meetingResponse.Meeting);
-		const transformedAttendee = capitalToLower(attendeeResponse.Attendee);
+		const transformedHostAttendee = capitalToLower(
+			hostAttendeeResponse.Attendee,
+		);
+		const transformedNonHostAttendee = capitalToLower(
+			nonHostAttendeeResponse.Attendee,
+		);
 
 		const [createdMeeting] = await db
 			.insert(meetings)
@@ -123,32 +153,23 @@ export async function createMeeting() {
 			})
 			.returning();
 
-		// TODO: Replace this with dynamic data.
-		// This data is coming from the actual participatns table data.
-		const hardcodedParticipants = {
-			host: {
-				id: "763e07ad-2d49-4dab-8d5f-fb0b505da275",
-			},
-			nonHost: {
-				id: "76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe",
-			},
-		};
-
-		// Save attendee data to attendees table
-		const [createdAttendee] = await db
+		// Save attendees data (both host and non-host)
+		await db
 			.insert(attendees)
 			.values([
 				{
+					// Host
 					meetingId: createdMeeting.id,
-					externalUserId: hardcodedParticipants.host.id,
-					attendeeId: transformedAttendee.attendeeId || null,
-					joinToken: transformedAttendee.joinToken || null,
+					externalUserId: transformedHostAttendee.externalUserId,
+					attendeeId: transformedHostAttendee.attendeeId || null,
+					joinToken: transformedHostAttendee.joinToken || null,
 				},
 				{
+					// Non-host
 					meetingId: createdMeeting.id,
-					externalUserId: hardcodedParticipants.nonHost.id,
-					attendeeId: transformedAttendee.attendeeId || null,
-					joinToken: transformedAttendee.joinToken || null,
+					externalUserId: transformedHostAttendee.externalUserId,
+					attendeeId: transformedNonHostAttendee.attendeeId || null,
+					joinToken: transformedNonHostAttendee.joinToken || null,
 				},
 			])
 			.returning();
@@ -156,9 +177,10 @@ export async function createMeeting() {
 		console.log("✅ AWS Chime meeting created and saved to database:");
 		console.log("Meeting ID:", transformedMeeting.meetingId);
 		console.log("External Meeting ID:", transformedMeeting.externalMeetingId);
-		console.log("Database ID:", createdMeeting.id);
-		console.log("Attendee ID:", transformedAttendee.attendeeId);
-		console.log("Attendee DB ID:", createdAttendee.id);
+		console.log("Host Attendee ID:", transformedHostAttendee.attendeeId);
+		console.log("Non-host Attendee ID:", transformedNonHostAttendee.attendeeId);
+		console.log("Host ID:", transformedHostAttendee.externalUserId);
+		console.log("Non-host ID:", transformedNonHostAttendee.externalUserId);
 
 		revalidatePath("/");
 	} catch (error) {
