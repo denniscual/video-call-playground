@@ -21,11 +21,11 @@ export function DeleteMeetingButton({ meetingId }: DeleteMeetingButtonProps) {
   return (
     <Button 
       onClick={handleDelete}
-      disabled={isPending}
+      disabled={true}
       variant="destructive" 
       size="sm"
     >
-      {isPending ? <Spinner size="sm" /> : "Delete"}
+      Delete
     </Button>
   );
 }
