@@ -44,21 +44,57 @@ export default async function MeetingPage({
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h3 className="text-lg font-medium mb-2">Meeting ID</h3>
+              <h3 className="text-lg font-medium mb-2">Database ID (Primary Key)</h3>
               <div className="p-4 bg-muted rounded-lg">
                 <p className="font-mono text-sm break-all">
-                  {meeting.meetingId}
+                  {meeting.id}
                 </p>
               </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Use this ID to join the meeting
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium mb-2">External Meeting ID</h3>
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="font-mono text-sm break-all text-blue-900">
+                  {meeting.externalMeetingId}
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Human-readable meeting identifier
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium mb-2">Join Call URLs</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Host URL</p>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <p className="font-mono text-xs break-all">
+                      /join-call/{meeting.id}?participantId=763e07ad-2d49-4dab-8d5f-fb0b505da275
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Non-Host URL</p>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <p className="font-mono text-xs break-all">
+                      /join-call/{meeting.id}?participantId=76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Copy these URLs to join the meeting as host or participant
+              </p>
             </div>
 
             <div>
               <h3 className="text-lg font-medium mb-2">Meeting Information</h3>
               <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <p className="text-sm font-medium text-muted-foreground">External Meeting ID</p>
-                  <p className="text-sm font-mono">{meeting.externalMeetingId}</p>
-                </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">AWS Chime Meeting ID</p>
                   <p className="font-mono text-xs">{meeting.meetingId}</p>
@@ -91,9 +127,18 @@ export default async function MeetingPage({
             </div>
 
             <div className="flex gap-4 pt-4">
-              <Button className="flex-1" disabled>
-                Join Meeting (Not Available)
-              </Button>
+              <div className="flex gap-2 flex-1">
+                <Button asChild className="flex-1">
+                  <Link href={`/join-call/${meeting.id}?participantId=763e07ad-2d49-4dab-8d5f-fb0b505da275`}>
+                    Join as Host
+                  </Link>
+                </Button>
+                <Button asChild variant="secondary" className="flex-1">
+                  <Link href={`/join-call/${meeting.id}?participantId=76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe`}>
+                    Join as Participant
+                  </Link>
+                </Button>
+              </div>
               <Button asChild variant="outline">
                 <Link href="/">Back to Home</Link>
               </Button>
@@ -131,6 +176,10 @@ export default async function MeetingPage({
                           }`}>
                             {attendee.participant?.type === 'host' ? 'Host' : 'Participant'}
                           </span>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Participant ID</p>
+                          <p className="font-mono text-xs">{attendee.externalUserId}</p>
                         </div>
                         {attendee.attendeeId && (
                           <div>
