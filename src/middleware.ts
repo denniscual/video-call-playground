@@ -12,9 +12,16 @@ export default clerkMiddleware(async (auth, req) => {
     return;
   }
 
-  // Protect other routes
+  // Allow sign-in route to be publicly accessible
+  if (req.nextUrl.pathname.startsWith('/sign-in')) {
+    return;
+  }
+
+  // Protect other routes and redirect to sign-in if not authenticated
   if (isProtectedRoute(req)) {
-    await auth.protect();
+    await auth.protect({
+      unauthenticatedUrl: new URL('/sign-in', req.url).toString()
+    });
   }
 });
 
