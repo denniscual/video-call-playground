@@ -1,14 +1,13 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { meetings, attendees, participants } from "@/lib/db/schema";
+import { meetings, attendees } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import {
   CreateMeetingCommand,
   CreateAttendeeCommand,
   GetMeetingCommand,
-  GetMeetingCommandInput,
   GetMeetingCommandOutput,
 } from "@aws-sdk/client-chime-sdk-meetings";
 import { getChimeSDKMeetingsClient } from "@/lib/aws/chime-client";

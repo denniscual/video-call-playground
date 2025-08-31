@@ -311,7 +311,7 @@ const VIDEO_RESOLUTION_THRESHOLDS: Record<
 };
 
 type NetworkQualityType = "critical" | "poor" | "fair" | "good" | "excellent";
-const detectNetworkQuality = (clientMetricReport: any): NetworkQualityType => {
+const detectNetworkQuality = (clientMetricReport: { getObservableMetricValue: (metric: string) => number }): NetworkQualityType => {
   const availableOutgoingBitrate = clientMetricReport.getObservableMetricValue(
     "availableOutgoingBitrate",
   );

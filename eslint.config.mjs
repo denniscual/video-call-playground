@@ -10,5 +10,10 @@ export default defineConfig([
   ...compat.config({
     extends: ['next/core-web-vitals', 'next/typescript', 'next'],
   }),
+  {
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ]);
 

@@ -1,5 +1,4 @@
 import { getMeetingById } from "@/lib/actions/meetings";
-import { notFound } from "next/navigation";
 import JoinCallPageClient from "./join-call-client";
 
 export default async function JoinCallPage({

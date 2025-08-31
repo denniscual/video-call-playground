@@ -1,4 +1,4 @@
-export function capitalToLower(obj: Record<string, any>): Record<string, any> {
+export function capitalToLower(obj: any): any {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
@@ -22,7 +22,7 @@ export function capitalToLower(obj: Record<string, any>): Record<string, any> {
   return transformed;
 }
 
-export function lowerToCapital(obj: Record<string, any>): Record<string, any> {
+export function lowerToCapital(obj: any): any {
   if (obj === null || typeof obj !== 'object') {
     return obj;
   }
