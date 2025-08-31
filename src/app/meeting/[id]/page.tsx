@@ -174,9 +174,6 @@ export default async function MeetingPage({
                   </Link>
                 </Button>
               </div>
-              <Button asChild variant="outline">
-                <Link href="/">Back to Home</Link>
-              </Button>
             </div>
           </CardContent>
         </Card>
