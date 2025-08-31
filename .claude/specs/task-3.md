@@ -19,11 +19,6 @@
 - the host is the one that creates the meeting.
 - both host and non-host are attendees. host is just the one that can create the meeting.
 - the `hardcodedParticipants` are the only that can create and join the meeting.
-- meeting session has 4 state. idle, lobby, active, and end
-  - if the meeting is not yet created, the state is idle.
-  - if the meeting is created, it will transition to lobby. in this state, meeting will be initialized and then automatically join the call.
-  - if the participatn is already in the meeting, then transition to active.
-  - participant can also end the meeting (out of scope for now)
 - in the meeting, both participants can send audio and video strem. content share will not be supported for now.
 
 ## Implementation
