@@ -232,7 +232,7 @@ function useAudioVideoEvents() {
 
         const detectedNetworkQuality = detectNetworkQuality(clientMetricReport);
         // Apply bandwidth adjustment to every 10 seconds
-        if (now - lastBandwidthAdjustment.current > 10000) {
+        if (now - lastBandwidthAdjustment.current > 5000) {
           adjustVideoQuality(
             detectedNetworkQuality,
             enhancedSelectVideoQuality,
