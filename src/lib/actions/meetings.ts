@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { meetings, attendees } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { auth } from '@clerk/nextjs/server';
 import {
   CreateMeetingCommand,
   CreateAttendeeCommand,
@@ -84,6 +85,12 @@ export async function getMeetingById(id: string): Promise<{
 }
 
 export async function createLegacyMeeting(formData: FormData) {
+  const { userId } = await auth();
+  
+  if (!userId) {
+    throw new Error("Authentication required");
+  }
+
   const meetingUrl = formData.get("meeting_url") as string;
   const title = formData.get("title") as string;
 
@@ -105,6 +112,12 @@ export async function createLegacyMeeting(formData: FormData) {
 }
 
 export async function createMeeting() {
+  const { userId } = await auth();
+  
+  if (!userId) {
+    throw new Error("Authentication required");
+  }
+
   try {
     const client = getChimeSDKMeetingsClient();
     const region = process.env.NEXT_PUBLIC_AWS_CHIME_REGION!;
@@ -220,6 +233,12 @@ export async function createMeeting() {
 }
 
 export async function deleteMeeting(id: string) {
+  const { userId } = await auth();
+  
+  if (!userId) {
+    throw new Error("Authentication required");
+  }
+
   try {
     await db.delete(meetings).where(eq(meetings.id, id));
     revalidatePath("/");

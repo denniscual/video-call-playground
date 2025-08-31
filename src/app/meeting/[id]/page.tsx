@@ -9,12 +9,20 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 
 export default async function MeetingPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const { userId } = await auth();
+  
+  if (!userId) {
+    redirect('/');
+  }
+
   const { id } = await params;
   const response = await getMeetingById(id);
 

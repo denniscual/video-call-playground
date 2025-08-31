@@ -20,7 +20,6 @@ export function DeleteMeetingButton({ meetingId }: DeleteMeetingButtonProps) {
   return (
     <Button 
       onClick={handleDelete}
-      disabled={true}
       variant="destructive" 
       size="sm"
     >
