@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   AudioInputControl,
   AudioOutputControl,
@@ -10,7 +10,9 @@ import {
   MeetingProvider,
   MeetingStatus,
   Phone,
+  useAudioVideo,
   useLocalVideo,
+  useLogger,
   useMeetingManager,
   useMeetingStatus,
   useRemoteVideoTileState,
@@ -18,8 +20,8 @@ import {
   VideoTileGrid,
 } from "amazon-chime-sdk-component-library-react";
 import {
+  AudioVideoObserver,
   MeetingSessionConfiguration,
-  VideoInputDevice,
 } from "amazon-chime-sdk-js";
 import type { MeetingWithAttendees } from "@/lib/actions/meetings";
 import type { Attendee } from "@/lib/db/schema";
@@ -48,8 +50,9 @@ function MeetingSessionContent({
   const meetingStatus = useMeetingStatus();
   const { isVideoEnabled } = useLocalVideo();
   const { tiles } = useRemoteVideoTileState();
-
   const [error, setError] = useState<string>("");
+
+  useAudioVideoEvents();
 
   // Initialize meeting when component mounts
   useEffect(() => {
@@ -214,3 +217,147 @@ export function Meeting(props: MeetingSessionProps) {
     </ChimeThemeProvider>
   );
 }
+
+function useAudioVideoEvents() {
+  const enhancedSelectVideoQuality = useEnhancedSelectVideoQuality();
+  const lastBandwidthAdjustment = useRef(0);
+  const meetingManager = useMeetingManager();
+
+  useEffect(() => {
+    if (!meetingManager.meetingSession) return;
+
+    const audioVideoObserver: AudioVideoObserver = {
+      metricsDidReceive(clientMetricReport) {
+        const now = Date.now();
+
+        const detectedNetworkQuality = detectNetworkQuality(clientMetricReport);
+        // Apply bandwidth adjustment to every 10 seconds
+        if (now - lastBandwidthAdjustment.current > 10000) {
+          adjustVideoQuality(
+            detectedNetworkQuality,
+            enhancedSelectVideoQuality,
+          );
+          lastBandwidthAdjustment.current = now;
+        }
+      },
+    };
+
+    meetingManager.meetingSession.audioVideo.addObserver(audioVideoObserver);
+
+    return () => {
+      meetingManager.meetingSession?.audioVideo.removeObserver(
+        audioVideoObserver,
+      );
+    };
+  }, [meetingManager.meetingSession]);
+}
+
+export type EnhancedVideoQuality = "180p" | "360p" | "540p" | "720p";
+
+export function useEnhancedSelectVideoQuality(): (
+  quality: EnhancedVideoQuality,
+) => void {
+  const audioVideo = useAudioVideo();
+  const logger = useLogger();
+
+  const selectVideoQuality = useCallback(
+    (quality: EnhancedVideoQuality) => {
+      if (!audioVideo) {
+        return;
+      }
+
+      logger.info(`Enhanced Selecting video quality: ${quality}`);
+
+      switch (quality) {
+        case "180p":
+          // < 300kbps - Lowest quality (180p)
+          audioVideo.chooseVideoInputQuality(320, 180, 15);
+          audioVideo.setVideoMaxBandwidthKbps(300);
+          break;
+        case "360p":
+          // 300kbps - 500kbps - Low quality (360p)
+          audioVideo.chooseVideoInputQuality(640, 360, 15);
+          audioVideo.setVideoMaxBandwidthKbps(500);
+          break;
+        case "540p":
+          // 500kbps - 800kbps - Medium quality (540p)
+          audioVideo.chooseVideoInputQuality(960, 540, 15);
+          audioVideo.setVideoMaxBandwidthKbps(800);
+          break;
+        case "720p":
+          // 800kbps - 1.2 Mbps - Keep 720p (no 800kbps tier)
+          audioVideo.chooseVideoInputQuality(1280, 720, 15);
+          audioVideo.setVideoMaxBandwidthKbps(1200);
+          break;
+        default:
+          logger.warn(`Unsupported video quality: ${quality}`);
+      }
+    },
+    [audioVideo, logger],
+  );
+
+  return selectVideoQuality;
+}
+
+const VIDEO_RESOLUTION_THRESHOLDS: Record<
+  NetworkQualityType,
+  EnhancedVideoQuality
+> = {
+  excellent: "720p", // > 1.2 Mbps - Full quality (720p)
+  good: "720p", // 800kbps - 1.2 Mbps - Keep 720p (no 800kbps tier)
+  fair: "540p", // 500kbps - 800kbps - Medium quality (540p)
+  poor: "360p", // 300kbps - 500kbps - Low quality (360p)
+  critical: "180p", // < 300kbps - Lowest quality (180p)
+};
+
+type NetworkQualityType = "critical" | "poor" | "fair" | "good" | "excellent";
+const detectNetworkQuality = (clientMetricReport: any): NetworkQualityType => {
+  const availableOutgoingBitrate = clientMetricReport.getObservableMetricValue(
+    "availableOutgoingBitrate",
+  );
+  const audioPacketLossPercent = clientMetricReport.getObservableMetricValue(
+    "audioPacketLossPercent",
+  );
+  const uploadBandwidthKbps = availableOutgoingBitrate / 1000;
+
+  if (
+    uploadBandwidthKbps < 300 ||
+    (!isNaN(audioPacketLossPercent) && audioPacketLossPercent > 5)
+  )
+    return "critical";
+  if (
+    uploadBandwidthKbps < 500 ||
+    (!isNaN(audioPacketLossPercent) && audioPacketLossPercent > 3)
+  )
+    return "poor";
+  if (
+    uploadBandwidthKbps < 800 ||
+    (!isNaN(audioPacketLossPercent) && audioPacketLossPercent > 2)
+  )
+    return "fair";
+  if (
+    uploadBandwidthKbps < 1200 ||
+    (!isNaN(audioPacketLossPercent) && audioPacketLossPercent > 1)
+  )
+    return "good";
+  return "excellent";
+};
+
+const adjustVideoQuality = (
+  networkQuality: NetworkQualityType,
+  selectVideoQuality: ReturnType<typeof useEnhancedSelectVideoQuality>,
+) => {
+  const targetVideoQuality =
+    VIDEO_RESOLUTION_THRESHOLDS[
+      networkQuality as keyof typeof VIDEO_RESOLUTION_THRESHOLDS
+    ];
+
+  console.log("video-logs", "adjustVideoQuality", {
+    targetVideoQuality,
+    networkQuality,
+  });
+
+  selectVideoQuality(targetVideoQuality);
+
+  return targetVideoQuality;
+};
