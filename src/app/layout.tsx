@@ -37,7 +37,9 @@ export default function RootLayout({
         >
           <header className="flex justify-between items-center p-4 border-b">
             <div>
-              <h1 className="text-xl font-semibold">Video Call Playground</h1>
+              <Link href="/">
+                <h1 className="text-xl font-semibold cursor-pointer hover:text-blue-600 transition-colors">Video Call Playground</h1>
+              </Link>
             </div>
             <div className="flex items-center gap-4">
               <SignedOut>
