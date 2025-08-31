@@ -57,45 +57,45 @@ function MeetingSessionContent({
   // Initialize meeting when component mounts
   useEffect(() => {
     if (meetingManager && meeting && attendee) {
+      const initializeMeeting = async () => {
+        console.log("🚀 Starting meeting initialization...");
+        setError("");
+
+        try {
+          // Create meeting session configuration
+          const meetingSessionConfiguration = new MeetingSessionConfiguration(
+            {
+              Meeting: chimeMeeting.Meeting!,
+            },
+            {
+              AttendeeId: attendee.attendeeId || "",
+              JoinToken: attendee.joinToken || "",
+              ExternalUserId: attendee.externalUserId || "",
+            },
+          );
+
+          console.log("⏳ Joining meeting...");
+          await meetingManager.join(meetingSessionConfiguration);
+          console.log("✅ Successfully joined meeting");
+
+          setTimeout(async () => {
+            console.log("▶️ Starting meeting...");
+            await meetingManager.start();
+            console.log("🎥 Meeting started successfully");
+
+            console.log("🎉 Meeting initialization complete!");
+          }, 300);
+        } catch (error) {
+          console.error("❌ Error initializing meeting:", error);
+          setError(
+            error instanceof Error ? error.message : "Failed to join meeting",
+          );
+        }
+      };
+
       initializeMeeting();
     }
-  }, [meetingManager, meeting, attendee]);
-
-  const initializeMeeting = async () => {
-    console.log("🚀 Starting meeting initialization...");
-    setError("");
-
-    try {
-      // Create meeting session configuration
-      const meetingSessionConfiguration = new MeetingSessionConfiguration(
-        {
-          Meeting: chimeMeeting.Meeting!,
-        },
-        {
-          AttendeeId: attendee.attendeeId || "",
-          JoinToken: attendee.joinToken || "",
-          ExternalUserId: attendee.externalUserId || "",
-        },
-      );
-
-      console.log("⏳ Joining meeting...");
-      await meetingManager.join(meetingSessionConfiguration);
-      console.log("✅ Successfully joined meeting");
-
-      setTimeout(async () => {
-        console.log("▶️ Starting meeting...");
-        await meetingManager.start();
-        console.log("🎥 Meeting started successfully");
-
-        console.log("🎉 Meeting initialization complete!");
-      }, 300);
-    } catch (error) {
-      console.error("❌ Error initializing meeting:", error);
-      setError(
-        error instanceof Error ? error.message : "Failed to join meeting",
-      );
-    }
-  };
+  }, [meetingManager, meeting, attendee, chimeMeeting]);
 
   // Show error state
   if (error) {
@@ -249,7 +249,7 @@ function useAudioVideoEvents() {
         audioVideoObserver,
       );
     };
-  }, [meetingManager.meetingSession]);
+  }, [meetingManager.meetingSession, enhancedSelectVideoQuality]);
 }
 
 export type EnhancedVideoQuality = "180p" | "360p" | "540p" | "720p";
