@@ -7,6 +7,9 @@ import { revalidatePath } from "next/cache";
 import {
   CreateMeetingCommand,
   CreateAttendeeCommand,
+  GetMeetingCommand,
+  GetMeetingCommandInput,
+  GetMeetingCommandOutput,
 } from "@aws-sdk/client-chime-sdk-meetings";
 import { getChimeSDKMeetingsClient } from "@/lib/aws/chime-client";
 import { v4 as uuidv4 } from "uuid";
@@ -48,9 +51,10 @@ export async function getAllMeetings(): Promise<Meeting[]> {
   }
 }
 
-export async function getMeetingById(
-  id: string,
-): Promise<MeetingWithAttendees | null> {
+export async function getMeetingById(id: string): Promise<{
+  result: MeetingWithAttendees;
+  meeting: GetMeetingCommandOutput; // AWS Chime meeting instance
+} | null> {
   try {
     const result = await db.query.meetings.findFirst({
       where: eq(meetings.id, id),
@@ -62,7 +66,18 @@ export async function getMeetingById(
         },
       },
     });
-    return result || null;
+
+    const client = getChimeSDKMeetingsClient();
+    const getMeetingResponse = await client.send(
+      new GetMeetingCommand({
+        MeetingId: result?.meetingId,
+      }),
+    );
+
+    return {
+      result: result!,
+      meeting: getMeetingResponse,
+    };
   } catch (error) {
     console.error("Error fetching meeting:", error);
     return null;

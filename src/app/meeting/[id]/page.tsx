@@ -1,20 +1,28 @@
 import { getMeetingById } from "@/lib/actions/meetings";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default async function MeetingPage({ 
-  params 
-}: { 
-  params: Promise<{ id: string }> 
+export default async function MeetingPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const meeting = await getMeetingById(id);
+  const response = await getMeetingById(id);
 
-  if (!meeting) {
+  if (!response) {
     notFound();
   }
+
+  const { result: meeting } = response;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -25,7 +33,8 @@ export default async function MeetingPage({
               {meeting.externalMeetingId || "Meeting Details"}
             </h1>
             <p className="text-muted-foreground mt-2">
-              View meeting details • {meeting.attendees?.length || 0} attendee(s)
+              View meeting details • {meeting.attendees?.length || 0}{" "}
+              attendee(s)
             </p>
           </div>
           <Button asChild variant="outline">
@@ -44,11 +53,11 @@ export default async function MeetingPage({
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h3 className="text-lg font-medium mb-2">Database ID (Primary Key)</h3>
+              <h3 className="text-lg font-medium mb-2">
+                Database ID (Primary Key)
+              </h3>
               <div className="p-4 bg-muted rounded-lg">
-                <p className="font-mono text-sm break-all">
-                  {meeting.id}
-                </p>
+                <p className="font-mono text-sm break-all">{meeting.id}</p>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 Use this ID to join the meeting
@@ -71,18 +80,24 @@ export default async function MeetingPage({
               <h3 className="text-lg font-medium mb-2">Join Call URLs</h3>
               <div className="space-y-3">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Host URL</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Host URL
+                  </p>
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="font-mono text-xs break-all">
-                      /join-call/{meeting.id}?participantId=763e07ad-2d49-4dab-8d5f-fb0b505da275
+                      /join-call/{meeting.id}
+                      ?participantId=763e07ad-2d49-4dab-8d5f-fb0b505da275
                     </p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Non-Host URL</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Non-Host URL
+                  </p>
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="font-mono text-xs break-all">
-                      /join-call/{meeting.id}?participantId=76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe
+                      /join-call/{meeting.id}
+                      ?participantId=76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe
                     </p>
                   </div>
                 </div>
@@ -96,32 +111,48 @@ export default async function MeetingPage({
               <h3 className="text-lg font-medium mb-2">Meeting Information</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">AWS Chime Meeting ID</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    AWS Chime Meeting ID
+                  </p>
                   <p className="font-mono text-xs">{meeting.meetingId}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Database ID</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Database ID
+                  </p>
                   <p className="font-mono text-xs">{meeting.id}</p>
                 </div>
                 {meeting.mediaRegion && (
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Media Region</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Media Region
+                    </p>
                     <p className="text-sm">{meeting.mediaRegion}</p>
                   </div>
                 )}
                 {meeting.meetingHostId && (
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Meeting Host ID</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Meeting Host ID
+                    </p>
                     <p className="font-mono text-xs">{meeting.meetingHostId}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Created</p>
-                  <p className="text-sm">{new Date(meeting.createdAt).toLocaleString()}</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Created
+                  </p>
+                  <p className="text-sm">
+                    {new Date(meeting.createdAt).toLocaleString()}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Last Updated</p>
-                  <p className="text-sm">{new Date(meeting.updatedAt).toLocaleString()}</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Last Updated
+                  </p>
+                  <p className="text-sm">
+                    {new Date(meeting.updatedAt).toLocaleString()}
+                  </p>
                 </div>
               </div>
             </div>
@@ -129,12 +160,16 @@ export default async function MeetingPage({
             <div className="flex gap-4 pt-4">
               <div className="flex gap-2 flex-1">
                 <Button asChild className="flex-1">
-                  <Link href={`/join-call/${meeting.id}?participantId=763e07ad-2d49-4dab-8d5f-fb0b505da275`}>
+                  <Link
+                    href={`/join-call/${meeting.id}?participantId=763e07ad-2d49-4dab-8d5f-fb0b505da275`}
+                  >
                     Join as Host
                   </Link>
                 </Button>
                 <Button asChild variant="secondary" className="flex-1">
-                  <Link href={`/join-call/${meeting.id}?participantId=76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe`}>
+                  <Link
+                    href={`/join-call/${meeting.id}?participantId=76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe`}
+                  >
                     Join as Participant
                   </Link>
                 </Button>
@@ -149,15 +184,17 @@ export default async function MeetingPage({
         {/* Attendees Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Meeting Attendees ({meeting.attendees?.length || 0})</CardTitle>
-            <CardDescription>
-              Participants in this meeting
-            </CardDescription>
+            <CardTitle>
+              Meeting Attendees ({meeting.attendees?.length || 0})
+            </CardTitle>
+            <CardDescription>Participants in this meeting</CardDescription>
           </CardHeader>
           <CardContent>
             {!meeting.attendees || meeting.attendees.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">No attendees found for this meeting.</p>
+                <p className="text-muted-foreground">
+                  No attendees found for this meeting.
+                </p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -167,29 +204,44 @@ export default async function MeetingPage({
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <h4 className="font-medium">
-                            {attendee.participant?.name || `Attendee ${index + 1}`}
+                            {attendee.participant?.name ||
+                              `Attendee ${index + 1}`}
                           </h4>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            attendee.participant?.type === 'host' 
-                              ? 'bg-blue-100 text-blue-800' 
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {attendee.participant?.type === 'host' ? 'Host' : 'Participant'}
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              attendee.participant?.type === "host"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {attendee.participant?.type === "host"
+                              ? "Host"
+                              : "Participant"}
                           </span>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Participant ID</p>
-                          <p className="font-mono text-xs">{attendee.externalUserId}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Participant ID
+                          </p>
+                          <p className="font-mono text-xs">
+                            {attendee.externalUserId}
+                          </p>
                         </div>
                         {attendee.attendeeId && (
                           <div>
-                            <p className="text-xs text-muted-foreground">Attendee ID</p>
-                            <p className="font-mono text-xs">{attendee.attendeeId}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Attendee ID
+                            </p>
+                            <p className="font-mono text-xs">
+                              {attendee.attendeeId}
+                            </p>
                           </div>
                         )}
                         {attendee.joinToken && (
                           <div>
-                            <p className="text-xs text-muted-foreground">Join Token</p>
+                            <p className="text-xs text-muted-foreground">
+                              Join Token
+                            </p>
                             <p className="font-mono text-xs truncate max-w-xs">
                               {attendee.joinToken.substring(0, 20)}...
                             </p>
