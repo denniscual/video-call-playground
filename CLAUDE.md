@@ -13,6 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm db:generate` - Generate Drizzle migrations
 - `pnpm db:push` - Push schema to database
 - `pnpm db:migrate` - Run migrations
+- `pnpm run lint` - Run eslint
 
 Note: This project uses `pnpm` as the package manager (indicated by `pnpm-lock.yaml`).
 
