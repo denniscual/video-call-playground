@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { MeetingSession } from "@/components/meeting-session";
+import { Meeting } from "@/components/meeting";
 import type { MeetingWithAttendees } from "@/lib/actions/meetings";
 import type { GetMeetingCommandOutput } from "@aws-sdk/client-chime-sdk-meetings";
 import { MeetingProvider } from "amazon-chime-sdk-component-library-react";
@@ -64,7 +64,7 @@ export default function JoinCallPageClient({
 
   return (
     <MeetingProvider>
-      <MeetingSession
+      <Meeting
         chimeMeeting={chimeMeeting}
         meeting={result}
         attendee={attendee}

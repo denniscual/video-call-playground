@@ -205,7 +205,7 @@ function MeetingSessionContent({
 }
 
 // Main meeting session component
-export function MeetingSession(props: MeetingSessionProps) {
+export function Meeting(props: MeetingSessionProps) {
   return (
     <ChimeThemeProvider>
       <MeetingProvider>
