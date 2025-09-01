@@ -241,9 +241,20 @@ export async function deleteMeeting(id: string) {
 	}
 
 	try {
-		const deletedMeeting = (
-			await db.delete(meetings).where(eq(meetings.id, id)).returning()
-		)[0];
+		// First, get the meeting to extract the AWS meetingId
+		const meetingToDelete = await db.query.meetings.findFirst({
+			where: eq(meetings.id, id),
+		});
+
+		if (!meetingToDelete) {
+			throw new Error("Meeting not found");
+		}
+
+		// Delete attendees first (foreign key constraint)
+		await db.delete(attendees).where(eq(attendees.meetingId, id));
+
+		// Then delete the meeting
+		await db.delete(meetings).where(eq(meetings.id, id));
 
 		// Deletes the specified Amazon Chime SDK meeting. The operation deletes all attendees, disconnects all clients, and prevents new clients from joining the meeting.
 		// Docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/chime-sdk-meetings/command/DeleteMeetingCommand/
@@ -251,7 +262,7 @@ export async function deleteMeeting(id: string) {
 		const client = getChimeSDKMeetingsClient();
 		await client.send(
 			new DeleteMeetingCommand({
-				MeetingId: deletedMeeting.meetingId, // this id holds the aws chime meeting id.
+				MeetingId: meetingToDelete.meetingId, // this id holds the aws chime meeting id.
 			}),
 		);
 
