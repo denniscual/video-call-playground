@@ -4,15 +4,18 @@ import { createMeeting } from "@/lib/actions/meetings";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useActionState } from "react";
+import { useRouter } from "next/navigation";
 
-export function CreateChimeMeetingForm() {
-  const [, formAction, isPending] = useActionState(
-    async () => {
-      await createMeeting();
-      return null;
-    },
-    null,
-  );
+export function CreateMeetingForm() {
+  const router = useRouter();
+
+  const [, formAction, isPending] = useActionState(async () => {
+    const result = await createMeeting();
+    if (result.meetingId) {
+      router.push(`/meeting/${result.id}`);
+    }
+    return null;
+  }, null);
 
   return (
     <form action={formAction}>
