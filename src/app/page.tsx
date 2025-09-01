@@ -29,9 +29,6 @@ export default async function Home() {
           <CardContent>
             <CreateMeetingForm />
           </CardContent>
-          <CardHeader>
-            <CardTitle>Create Chime Meeting</CardTitle>
-          </CardHeader>
         </Card>
 
         {/* Meetings List */}
