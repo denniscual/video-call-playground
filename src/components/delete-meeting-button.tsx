@@ -18,14 +18,7 @@ export function DeleteMeetingButton({ meetingId }: DeleteMeetingButtonProps) {
   };
 
   return (
-    <Button
-      style={{
-        cursor: "pointer",
-      }}
-      onClick={handleDelete}
-      variant="destructive"
-      size="sm"
-    >
+    <Button onClick={handleDelete} variant="destructive" size="sm">
       Delete
     </Button>
   );
