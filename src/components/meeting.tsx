@@ -1,11 +1,13 @@
 "use client";
 
 import React, {
+  startTransition,
   useActionState,
   useCallback,
   useEffect,
   useRef,
   useState,
+  useTransition,
 } from "react";
 import {
   AudioInputControl,
@@ -230,26 +232,30 @@ export function Meeting(props: MeetingSessionProps) {
 }
 
 function EndCallButton({ meeting }: { meeting: MeetingWithAttendees }) {
-  const { action, isPending } = useEndCallAction(meeting.id);
+  const { endCall, isPending } = useEndCall(meeting.id);
 
   if (isPending) {
     return <Spinner size="sm" className="mr-2" />;
   }
 
-  return <ControlBarButton icon={<Phone />} onClick={action} label="End" />;
+  return <ControlBarButton icon={<Phone />} onClick={endCall} label="End" />;
 }
 
-function useEndCallAction(meetingId: string) {
+function useEndCall(meetingId: string) {
   const router = useRouter();
   const meetingManager = useMeetingManager();
-  const [, deleteMeetingAction, isPending] = useActionState(async () => {
-    await deleteMeeting(meetingId);
-    await meetingManager.leave();
-    router.push("/");
-  }, null);
+  const [isPending, startTransition] = useTransition();
+
+  function endCall() {
+    startTransition(async () => {
+      await deleteMeeting(meetingId);
+      await meetingManager.leave();
+      router.push("/");
+    });
+  }
 
   return {
-    action: deleteMeetingAction,
+    endCall,
     isPending,
   };
 }
