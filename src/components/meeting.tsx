@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   AudioInputControl,
   AudioOutputControl,
@@ -23,10 +29,15 @@ import {
   AudioVideoObserver,
   MeetingSessionConfiguration,
 } from "amazon-chime-sdk-js";
-import type { MeetingWithAttendees } from "@/lib/actions/meetings";
+import {
+  deleteMeeting,
+  type MeetingWithAttendees,
+} from "@/lib/actions/meetings";
 import type { Attendee } from "@/lib/db/schema";
 import type { GetMeetingCommandOutput } from "@aws-sdk/client-chime-sdk-meetings";
 import ChimeThemeProvider from "./chime-theme-provider";
+import { Spinner } from "@/components/ui/spinner";
+import { useRouter } from "next/navigation";
 
 export type ParticipantType = "host" | "non-host";
 
@@ -197,7 +208,7 @@ function MeetingSessionContent({
               onClick={() => {}}
               label="Copy ID"
             />
-            <ControlBarButton icon={<Phone />} onClick={() => {}} label="End" />
+            <EndCallButton meeting={meeting} />
           </ControlBar>
         ) : (
           <div>Setting up meeting...</div>
@@ -216,6 +227,31 @@ export function Meeting(props: MeetingSessionProps) {
       </MeetingProvider>
     </ChimeThemeProvider>
   );
+}
+
+function EndCallButton({ meeting }: { meeting: MeetingWithAttendees }) {
+  const { action, isPending } = useEndCallAction(meeting.id);
+
+  if (isPending) {
+    return <Spinner size="sm" className="mr-2" />;
+  }
+
+  return <ControlBarButton icon={<Phone />} onClick={action} label="End" />;
+}
+
+function useEndCallAction(meetingId: string) {
+  const router = useRouter();
+  const meetingManager = useMeetingManager();
+  const [, deleteMeetingAction, isPending] = useActionState(async () => {
+    await deleteMeeting(meetingId);
+    await meetingManager.leave();
+    router.push("/");
+  }, null);
+
+  return {
+    action: deleteMeetingAction,
+    isPending,
+  };
 }
 
 function useAudioVideoEvents() {
@@ -311,7 +347,9 @@ const VIDEO_RESOLUTION_THRESHOLDS: Record<
 };
 
 type NetworkQualityType = "critical" | "poor" | "fair" | "good" | "excellent";
-const detectNetworkQuality = (clientMetricReport: { getObservableMetricValue: (metric: string) => number }): NetworkQualityType => {
+const detectNetworkQuality = (clientMetricReport: {
+  getObservableMetricValue: (metric: string) => number;
+}): NetworkQualityType => {
   const availableOutgoingBitrate = clientMetricReport.getObservableMetricValue(
     "availableOutgoingBitrate",
   );
