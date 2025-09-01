@@ -5,21 +5,28 @@ import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
 
 interface DeleteMeetingButtonProps {
-	meetingId: string;
+  meetingId: string;
 }
 
 export function DeleteMeetingButton({ meetingId }: DeleteMeetingButtonProps) {
-	const [, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
-	const handleDelete = () => {
-		startTransition(async () => {
-			await deleteMeeting(meetingId);
-		});
-	};
+  const handleDelete = () => {
+    startTransition(async () => {
+      await deleteMeeting(meetingId);
+    });
+  };
 
-	return (
-		<Button onClick={handleDelete} variant="destructive" size="sm" disabled>
-			Delete
-		</Button>
-	);
+  return (
+    <Button
+      style={{
+        cursor: "pointer",
+      }}
+      onClick={handleDelete}
+      variant="destructive"
+      size="sm"
+    >
+      Delete
+    </Button>
+  );
 }
