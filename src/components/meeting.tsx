@@ -1,14 +1,6 @@
 "use client";
 
-import React, {
-  startTransition,
-  useActionState,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import React, { useEffect, useRef, useState, useTransition } from "react";
 import {
   AudioInputControl,
   AudioOutputControl,
@@ -302,41 +294,38 @@ export function useEnhancedSelectVideoQuality(): (
   const audioVideo = useAudioVideo();
   const logger = useLogger();
 
-  const selectVideoQuality = useCallback(
-    (quality: EnhancedVideoQuality) => {
-      if (!audioVideo) {
-        return;
-      }
+  const selectVideoQuality = (quality: EnhancedVideoQuality) => {
+    if (!audioVideo) {
+      return;
+    }
 
-      logger.info(`Enhanced Selecting video quality: ${quality}`);
+    logger.info(`Enhanced Selecting video quality: ${quality}`);
 
-      switch (quality) {
-        case "180p":
-          // < 300kbps - Lowest quality (180p)
-          audioVideo.chooseVideoInputQuality(320, 180, 15);
-          audioVideo.setVideoMaxBandwidthKbps(300);
-          break;
-        case "360p":
-          // 300kbps - 500kbps - Low quality (360p)
-          audioVideo.chooseVideoInputQuality(640, 360, 15);
-          audioVideo.setVideoMaxBandwidthKbps(500);
-          break;
-        case "540p":
-          // 500kbps - 800kbps - Medium quality (540p)
-          audioVideo.chooseVideoInputQuality(960, 540, 15);
-          audioVideo.setVideoMaxBandwidthKbps(800);
-          break;
-        case "720p":
-          // 800kbps - 1.2 Mbps - Keep 720p (no 800kbps tier)
-          audioVideo.chooseVideoInputQuality(1280, 720, 15);
-          audioVideo.setVideoMaxBandwidthKbps(1200);
-          break;
-        default:
-          logger.warn(`Unsupported video quality: ${quality}`);
-      }
-    },
-    [audioVideo, logger],
-  );
+    switch (quality) {
+      case "180p":
+        // < 300kbps - Lowest quality (180p)
+        audioVideo.chooseVideoInputQuality(320, 180, 15);
+        audioVideo.setVideoMaxBandwidthKbps(300);
+        break;
+      case "360p":
+        // 300kbps - 500kbps - Low quality (360p)
+        audioVideo.chooseVideoInputQuality(640, 360, 15);
+        audioVideo.setVideoMaxBandwidthKbps(500);
+        break;
+      case "540p":
+        // 500kbps - 800kbps - Medium quality (540p)
+        audioVideo.chooseVideoInputQuality(960, 540, 15);
+        audioVideo.setVideoMaxBandwidthKbps(800);
+        break;
+      case "720p":
+        // 800kbps - 1.2 Mbps - Keep 720p (no 800kbps tier)
+        audioVideo.chooseVideoInputQuality(1280, 720, 15);
+        audioVideo.setVideoMaxBandwidthKbps(1200);
+        break;
+      default:
+        logger.warn(`Unsupported video quality: ${quality}`);
+    }
+  };
 
   return selectVideoQuality;
 }
