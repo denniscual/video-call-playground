@@ -11,6 +11,9 @@ importers:
       '@aws-sdk/client-chime-sdk-meetings':
         specifier: ^3.879.0
         version: 3.879.0
+      '@aws-sdk/client-rds-data':
+        specifier: ^3.879.0
+        version: 3.879.0
       '@clerk/nextjs':
         specifier: ^6.31.6
         version: 6.31.6(next@15.5.2(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -43,7 +46,7 @@ importers:
         version: 17.2.1
       drizzle-orm:
         specifier: ^0.44.5
-        version: 0.44.5(postgres@3.4.7)
+        version: 0.44.5(@aws-sdk/client-rds-data@3.879.0)(postgres@3.4.7)
       lucide-react:
         specifier: ^0.542.0
         version: 0.542.0(react@19.1.0)
@@ -140,6 +143,10 @@ packages:
 
   '@aws-sdk/client-chime-sdk-messaging@3.879.0':
     resolution: {integrity: sha512-bNU47GkFBicYXcNZgW9fSB/s0RNLBpdNI4QjX/rGq/6+PmSTBwCGKfwOKYZKH/wAUo1b7DEimm+UZDZKd9Ea7g==}
+    engines: {node: '>=18.0.0'}
+
+  '@aws-sdk/client-rds-data@3.879.0':
+    resolution: {integrity: sha512-ER6W81petjKjEFgNos6kGCbX8chveX2C4i1s4DHz5aflYO1NKZzqNZOGfcl5/ftXqpqJgtqlDWHwmGY10DLZAg==}
     engines: {node: '>=18.0.0'}
 
   '@aws-sdk/client-sso@3.879.0':
@@ -3125,6 +3132,50 @@ snapshots:
     transitivePeerDependencies:
       - aws-crt
 
+  '@aws-sdk/client-rds-data@3.879.0':
+    dependencies:
+      '@aws-crypto/sha256-browser': 5.2.0
+      '@aws-crypto/sha256-js': 5.2.0
+      '@aws-sdk/core': 3.879.0
+      '@aws-sdk/credential-provider-node': 3.879.0
+      '@aws-sdk/middleware-host-header': 3.873.0
+      '@aws-sdk/middleware-logger': 3.876.0
+      '@aws-sdk/middleware-recursion-detection': 3.873.0
+      '@aws-sdk/middleware-user-agent': 3.879.0
+      '@aws-sdk/region-config-resolver': 3.873.0
+      '@aws-sdk/types': 3.862.0
+      '@aws-sdk/util-endpoints': 3.879.0
+      '@aws-sdk/util-user-agent-browser': 3.873.0
+      '@aws-sdk/util-user-agent-node': 3.879.0
+      '@smithy/config-resolver': 4.1.5
+      '@smithy/core': 3.9.0
+      '@smithy/fetch-http-handler': 5.1.1
+      '@smithy/hash-node': 4.0.5
+      '@smithy/invalid-dependency': 4.0.5
+      '@smithy/middleware-content-length': 4.0.5
+      '@smithy/middleware-endpoint': 4.1.19
+      '@smithy/middleware-retry': 4.1.20
+      '@smithy/middleware-serde': 4.0.9
+      '@smithy/middleware-stack': 4.0.5
+      '@smithy/node-config-provider': 4.1.4
+      '@smithy/node-http-handler': 4.1.1
+      '@smithy/protocol-http': 5.1.3
+      '@smithy/smithy-client': 4.5.0
+      '@smithy/types': 4.3.2
+      '@smithy/url-parser': 4.0.5
+      '@smithy/util-base64': 4.0.0
+      '@smithy/util-body-length-browser': 4.0.0
+      '@smithy/util-body-length-node': 4.0.0
+      '@smithy/util-defaults-mode-browser': 4.0.27
+      '@smithy/util-defaults-mode-node': 4.0.27
+      '@smithy/util-endpoints': 3.0.7
+      '@smithy/util-middleware': 4.0.5
+      '@smithy/util-retry': 4.0.7
+      '@smithy/util-utf8': 4.0.0
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - aws-crt
+
   '@aws-sdk/client-sso@3.879.0':
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
@@ -4847,8 +4898,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.5(postgres@3.4.7):
+  drizzle-orm@0.44.5(@aws-sdk/client-rds-data@3.879.0)(postgres@3.4.7):
     optionalDependencies:
+      '@aws-sdk/client-rds-data': 3.879.0
       postgres: 3.4.7
 
   dunder-proto@1.0.1:
