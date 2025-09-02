@@ -23,7 +23,28 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Video Call Playground",
-  description: "Video Call Playground with AWS Chime SDK",
+  description: "Real-time video conferencing platform. Connect with colleagues and clients through high-quality video calls, screen sharing, and collaborative meetings.",
+  keywords: ["video call", "video conferencing", "online meetings", "screen sharing", "collaboration"],
+  authors: [{ name: "Video Call Playground" }],
+  creator: "Video Call Playground",
+  publisher: "Video Call Playground",
+  applicationName: "Video Call Playground",
+  openGraph: {
+    title: "Video Call Playground",
+    description: "Real-time video conferencing platform. Connect with colleagues and clients through high-quality video calls, screen sharing, and collaborative meetings.",
+    type: "website",
+    siteName: "Video Call Playground",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Video Call Playground",
+    description: "Real-time video conferencing platform. Connect with colleagues and clients through high-quality video calls, screen sharing, and collaborative meetings.",
+  },
+  viewport: "width=device-width, initial-scale=1",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
 };
 
 export default function RootLayout({
