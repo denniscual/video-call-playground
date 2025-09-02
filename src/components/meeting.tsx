@@ -445,7 +445,9 @@ function MeetingConfigSelector() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-400 whitespace-nowrap">Config:</span>
+      <span className="text-xs text-gray-400 whitespace-nowrap">
+        Meeting config:
+      </span>
       <Select value={selectedConfig} onValueChange={handleConfigChange}>
         <SelectTrigger className="w-[180px] h-8 bg-gray-800 border-gray-600 text-white text-xs">
           <SelectValue placeholder="Select configuration">
