@@ -16,6 +16,7 @@ import { getChimeSDKMeetingsClient } from "@/lib/aws/chime-client";
 import { v4 as uuidv4 } from "uuid";
 import { capitalToLower } from "@/lib/utils/case-transform";
 import type { Meeting, Attendee, Participant } from "@/lib/db/schema";
+import { hardcodedAwsParticipants } from "../util";
 
 // Type for meeting with attendees and participant details
 export type MeetingWithAttendees = Meeting & {
@@ -124,14 +125,7 @@ export async function createMeeting() {
     const region = process.env.NEXT_PUBLIC_AWS_CHIME_REGION!;
     // TODO: Replace this with dynamic data.
     // This data is coming from the actual participatns table data.
-    const hardcodedParticipants = {
-      host: {
-        id: "763e07ad-2d49-4dab-8d5f-fb0b505da275",
-      },
-      nonHost: {
-        id: "76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe",
-      },
-    };
+    const hardcodedParticipants = hardcodedAwsParticipants;
 
     const meetingInput = {
       ClientRequestToken: uuidv4(),

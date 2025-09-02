@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { hardcodedAwsParticipants } from "@/lib/util";
 
 export default async function MeetingPage({
   params,
@@ -18,9 +19,9 @@ export default async function MeetingPage({
   params: Promise<{ id: string }>;
 }) {
   const { userId } = await auth();
-  
+
   if (!userId) {
-    redirect('/');
+    redirect("/");
   }
 
   const { id } = await params;
@@ -94,7 +95,7 @@ export default async function MeetingPage({
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="font-mono text-xs break-all">
                       /join-call/{meeting.id}
-                      ?participantId=763e07ad-2d49-4dab-8d5f-fb0b505da275
+                      ?participantId={hardcodedAwsParticipants.host.id}
                     </p>
                   </div>
                 </div>
@@ -105,7 +106,7 @@ export default async function MeetingPage({
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="font-mono text-xs break-all">
                       /join-call/{meeting.id}
-                      ?participantId=76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe
+                      ?participantId={hardcodedAwsParticipants.nonHost.id}
                     </p>
                   </div>
                 </div>
@@ -169,14 +170,14 @@ export default async function MeetingPage({
               <div className="flex gap-2 flex-1">
                 <Button asChild className="flex-1">
                   <Link
-                    href={`/join-call/${meeting.id}?participantId=763e07ad-2d49-4dab-8d5f-fb0b505da275`}
+                    href={`/join-call/${meeting.id}?participantId=${hardcodedAwsParticipants.host.id}`}
                   >
                     Join as Host
                   </Link>
                 </Button>
                 <Button asChild variant="secondary" className="flex-1">
                   <Link
-                    href={`/join-call/${meeting.id}?participantId=76e6aaa3-1dbe-451c-b8e6-6cb87366d0fe`}
+                    href={`/join-call/${meeting.id}?participantId=${hardcodedAwsParticipants.nonHost.id}`}
                   >
                     Join as Participant
                   </Link>
