@@ -341,17 +341,17 @@ export function useEnhancedSelectVideoQuality(): (
       case "180p":
         // < 300kbps - Lowest quality (180p)
         audioVideo.chooseVideoInputQuality(320, 180, 15);
-        audioVideo.setVideoMaxBandwidthKbps(300);
+        audioVideo.setVideoMaxBandwidthKbps(400);
         break;
       case "360p":
         // 300kbps - 500kbps - Low quality (360p)
         audioVideo.chooseVideoInputQuality(640, 360, 15);
-        audioVideo.setVideoMaxBandwidthKbps(500);
+        audioVideo.setVideoMaxBandwidthKbps(600);
         break;
       case "540p":
         // 500kbps - 800kbps - Medium quality (540p)
         audioVideo.chooseVideoInputQuality(960, 540, 15);
-        audioVideo.setVideoMaxBandwidthKbps(800);
+        audioVideo.setVideoMaxBandwidthKbps(1200);
         break;
       case "720p":
         // 800kbps - 1.2 Mbps - Keep 720p (no 800kbps tier)
@@ -463,8 +463,10 @@ function ToggleAudioEventsObserver() {
       >
         Video Quality Tracker
       </label>
-      <span className={`text-xs ${isEnabled ? 'text-green-400' : 'text-gray-500'}`}>
-        {isEnabled ? 'On' : 'Off'}
+      <span
+        className={`text-xs ${isEnabled ? "text-green-400" : "text-gray-500"}`}
+      >
+        {isEnabled ? "On" : "Off"}
       </span>
     </div>
   );
