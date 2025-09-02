@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import {
   ClerkProvider,
@@ -40,7 +40,11 @@ export const metadata: Metadata = {
     title: "Video Call Playground",
     description: "Real-time video conferencing platform. Connect with colleagues and clients through high-quality video calls, screen sharing, and collaborative meetings.",
   },
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
