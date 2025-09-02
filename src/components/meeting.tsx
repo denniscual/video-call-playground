@@ -36,6 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   meetingConfigs,
   getMeetingConfigById,
@@ -66,7 +67,16 @@ function MeetingSessionContent({
   const { tiles } = useRemoteVideoTileState();
   const [error, setError] = useState<string>("");
 
-  // useAudioVideoEvents();
+  // Get the audio events observer enabled state from sessionStorage
+  const [audioEventsEnabled] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const stored = sessionStorage.getItem("audioEventsObserverEnabled");
+      return stored !== null ? stored === "true" : true; // Default to enabled
+    }
+    return true;
+  });
+
+  useAudioVideoEvents(audioEventsEnabled);
 
   // Initialize meeting when component mounts
   useEffect(() => {
@@ -203,6 +213,7 @@ function MeetingSessionContent({
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <ToggleAudioEventsObserver />
             <MeetingConfigSelector />
             <div className="text-sm text-green-400">Connected</div>
           </div>
@@ -277,13 +288,13 @@ function useEndCall(meetingId: string) {
   };
 }
 
-function useAudioVideoEvents() {
+function useAudioVideoEvents(enabled: boolean = true) {
   const enhancedSelectVideoQuality = useEnhancedSelectVideoQuality();
   const lastBandwidthAdjustment = useRef(0);
   const meetingManager = useMeetingManager();
 
   useEffect(() => {
-    if (!meetingManager.meetingSession) return;
+    if (!meetingManager.meetingSession || !enabled) return;
 
     const audioVideoObserver: AudioVideoObserver = {
       metricsDidReceive(clientMetricReport) {
@@ -308,7 +319,7 @@ function useAudioVideoEvents() {
         audioVideoObserver,
       );
     };
-  }, [meetingManager.meetingSession, enhancedSelectVideoQuality]);
+  }, [meetingManager.meetingSession, enhancedSelectVideoQuality, enabled]);
 }
 
 export type EnhancedVideoQuality = "180p" | "360p" | "540p" | "720p";
@@ -419,6 +430,45 @@ const adjustVideoQuality = (
 
   return targetVideoQuality;
 };
+
+// Toggle Audio Events Observer Component
+function ToggleAudioEventsObserver() {
+  const [isEnabled] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const stored = sessionStorage.getItem("audioEventsObserverEnabled");
+      return stored !== null ? stored === "true" : true; // Default to enabled
+    }
+    return true;
+  });
+
+  const handleToggle = (checked: boolean) => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("audioEventsObserverEnabled", checked.toString());
+      // Reload the page to apply the new configuration
+      window.location.reload();
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <Checkbox
+        id="audio-events-observer"
+        checked={isEnabled}
+        onCheckedChange={handleToggle}
+        className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+      />
+      <label
+        htmlFor="audio-events-observer"
+        className="text-xs text-gray-400 whitespace-nowrap cursor-pointer"
+      >
+        Video Quality Tracker
+      </label>
+      <span className={`text-xs ${isEnabled ? 'text-green-400' : 'text-gray-500'}`}>
+        {isEnabled ? 'On' : 'Off'}
+      </span>
+    </div>
+  );
+}
 
 // Meeting Configuration Selector Component
 function MeetingConfigSelector() {
