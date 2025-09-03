@@ -384,7 +384,7 @@ type NetworkQualityType = "critical" | "poor" | "fair" | "good" | "excellent";
 // - for our UI's main app, for now, we can just use the existing selectVideoQuality that only supports 360p | 540p | 720p. We are still going to use our new detect network quality and adjustVideoQuality
 //   that support critical network (180p). What we can do is to unify the poor and critical networks for now so that we can use the Chime selectVideoQuality sdk. Meaning for critical and poor, we
 //   are going to use same resolution "360p".
-// - to make our PR clearer. We need to add a note or statement that this optimization only applies to the sender's outgoing video. While both sender and receiver benefit, the received video optimization for other participants is handled separately.
+// - (Optional): to make our PR clearer. We need to add a note or statement that this optimization only applies to the sender's outgoing video. While both sender and receiver benefit, the received video optimization for other participants is handled separately.
 const detectNetworkQuality = (clientMetricReport: {
   getObservableMetricValue: (metric: string) => number;
 }): NetworkQualityType => {
