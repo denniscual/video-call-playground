@@ -50,3 +50,14 @@ This is a fresh Create Next App installation - the main page still contains the 
 ## Task Specifications
 
 When working on tasks, always check the `.claude/specs/` directory for relevant technical design documents and task specifications. These files contain detailed implementation guidance, architectural decisions, and context for specific features like authentication integration.
+
+**Important**: Before implementing based on these specifications, validate that the technical design documents are still valid by:
+
+- Checking the actual codebase for any changes that may have diverged from the specs
+- Verifying that referenced files, functions, and architectural patterns still exist as documented
+- Confirming that dependencies and integrations mentioned in the specs are still valid
+- If discrepancies are found, prioritize the current codebase implementation over outdated specification details
+
+```
+
+```
