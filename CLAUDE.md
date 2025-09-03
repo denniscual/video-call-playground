@@ -46,3 +46,7 @@ This is a Next.js 15.5.2 application with the App Router architecture, set up as
 ### Current State
 
 This is a fresh Create Next App installation - the main page still contains the default Next.js welcome template. The project is ready for video call functionality to be built on top of this foundation.
+
+## Task Specifications
+
+When working on tasks, always check the `.claude/specs/` directory for relevant technical design documents and task specifications. These files contain detailed implementation guidance, architectural decisions, and context for specific features like authentication integration.
