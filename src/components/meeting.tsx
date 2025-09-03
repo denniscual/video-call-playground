@@ -392,30 +392,58 @@ const detectNetworkQuality = (clientMetricReport: {
   );
   const audioPacketLossPercent = clientMetricReport.getObservableMetricValue(
     "audioPacketLossPercent",
-  );
+  ) || 0;
   const uploadBandwidthKbps = availableOutgoingBitrate / 1000;
 
-  if (
-    uploadBandwidthKbps < 300 ||
-    (!isNaN(audioPacketLossPercent) && audioPacketLossPercent > 5)
-  )
-    return "critical";
-  if (
-    uploadBandwidthKbps < 500 ||
-    (!isNaN(audioPacketLossPercent) && audioPacketLossPercent > 3)
-  )
-    return "poor";
-  if (
-    uploadBandwidthKbps < 800 ||
-    (!isNaN(audioPacketLossPercent) && audioPacketLossPercent > 2)
-  )
-    return "fair";
-  if (
-    uploadBandwidthKbps < 1200 ||
-    (!isNaN(audioPacketLossPercent) && audioPacketLossPercent > 1)
-  )
-    return "good";
-  return "excellent";
+  // Implement bandwidth scoring (1-5 scale)
+  let bandwidthScore = 0;
+  if (uploadBandwidthKbps >= 1200)
+    bandwidthScore = 5; // Excellent
+  else if (uploadBandwidthKbps >= 800)
+    bandwidthScore = 4; // Good
+  else if (uploadBandwidthKbps > 500)
+    bandwidthScore = 3; // Fair (501-799)
+  else if (uploadBandwidthKbps >= 300)
+    bandwidthScore = 2; // Poor (300-500 inclusive)
+  else bandwidthScore = 1; // Critical (< 300)
+
+  // Calculate packet loss penalty
+  let packetLossPenalty = 0;
+  if (audioPacketLossPercent > 5)
+    packetLossPenalty = 3; // Severe
+  else if (audioPacketLossPercent > 3)
+    packetLossPenalty = 2; // Moderate
+  else if (audioPacketLossPercent > 1) packetLossPenalty = 1; // Minor
+
+  // Combine scores with floor of 1
+  const finalScore = Math.max(1, bandwidthScore - packetLossPenalty);
+
+  // Map to quality with bandwidth boundaries
+  let quality: NetworkQualityType;
+  if (uploadBandwidthKbps < 300) {
+    quality = "critical";
+  } else if (uploadBandwidthKbps <= 500) {
+    quality = finalScore >= 2 ? "poor" : "critical";
+  } else {
+    // Standard scoring for bandwidth > 500
+    if (finalScore >= 5) quality = "excellent";
+    else if (finalScore >= 4) quality = "good";
+    else if (finalScore >= 3) quality = "fair";
+    else if (finalScore >= 2) quality = "poor";
+    else quality = "critical";
+  }
+
+  // Log scoring components for debugging
+  console.log("video-logs", "Network scoring", {
+    uploadBandwidthKbps,
+    audioPacketLossPercent,
+    bandwidthScore,
+    packetLossPenalty,
+    finalScore,
+    quality,
+  });
+
+  return quality;
 };
 
 const adjustVideoQuality = (
