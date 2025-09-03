@@ -378,6 +378,12 @@ const VIDEO_RESOLUTION_THRESHOLDS: Record<
 };
 
 type NetworkQualityType = "critical" | "poor" | "fair" | "good" | "excellent";
+// TODO:
+// - improve the detection logic especially when the network is coming from slow to fast network. Detection logic from fast to slow network is good.
+// - check the claude recommendation especially the Hysteresis.
+// - for our UI's main app, for now, we can just use the existing selectVideoQuality that only supports 360p | 540p | 720p. We are still going to use our new detect network quality and adjustVideoQuality
+//   that support critical network (180p). What we can do is to unify the poor and critical networks for now so that we can use the Chime selectVideoQuality sdk. Meaning for critical and poor, we
+//   are going to use same resolution "360p".
 const detectNetworkQuality = (clientMetricReport: {
   getObservableMetricValue: (metric: string) => number;
 }): NetworkQualityType => {
