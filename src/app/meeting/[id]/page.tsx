@@ -11,7 +11,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { hardcodedAwsParticipants } from "@/lib/util";
+import { hardcodedSupabaseParticipants } from "@/lib/utils";
 
 export default async function MeetingPage({
   params,
@@ -95,7 +95,7 @@ export default async function MeetingPage({
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="font-mono text-xs break-all">
                       /join-call/{meeting.id}
-                      ?participantId={hardcodedAwsParticipants.host.id}
+                      ?participantId={hardcodedSupabaseParticipants.host.id}
                     </p>
                   </div>
                 </div>
@@ -106,7 +106,7 @@ export default async function MeetingPage({
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="font-mono text-xs break-all">
                       /join-call/{meeting.id}
-                      ?participantId={hardcodedAwsParticipants.nonHost.id}
+                      ?participantId={hardcodedSupabaseParticipants.nonHost.id}
                     </p>
                   </div>
                 </div>
@@ -170,14 +170,14 @@ export default async function MeetingPage({
               <div className="flex gap-2 flex-1">
                 <Button asChild className="flex-1">
                   <Link
-                    href={`/join-call/${meeting.id}?participantId=${hardcodedAwsParticipants.host.id}`}
+                    href={`/join-call/${meeting.id}?participantId=${hardcodedSupabaseParticipants.host.id}`}
                   >
                     Join as Host
                   </Link>
                 </Button>
                 <Button asChild variant="secondary" className="flex-1">
                   <Link
-                    href={`/join-call/${meeting.id}?participantId=${hardcodedAwsParticipants.nonHost.id}`}
+                    href={`/join-call/${meeting.id}?participantId=${hardcodedSupabaseParticipants.nonHost.id}`}
                   >
                     Join as Participant
                   </Link>
