@@ -3,8 +3,6 @@
 ## Project Setups
 
 - Supabase for postgres
-  - Project URL: https://wpggkfbcmekytsjcrrma.supabase.co
-  - API KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwZ2drZmJjbWVreXRzamNycm1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NzM2OTcsImV4cCI6MjA3MjA0OTY5N30.LCDjzr46d56BVRD0LTjPJdzS-9iNMuvG4bY5dN-N8YM
 - Use Drizzle for ORM
 - Shadcn for UI Components
 
