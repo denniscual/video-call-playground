@@ -304,8 +304,41 @@ function useAudioVideoEvents(enabled: boolean = true) {
     if (!meetingManager.meetingSession || !enabled) return;
 
     const audioVideoObserver: AudioVideoObserver = {
+      connectionDidBecomeGood() {
+        console.log("video-logs", "connectionDidBecomeGood");
+      },
+      connectionDidBecomePoor() {
+        console.log("video-logs", "connectionDidBecomePoor");
+      },
+      connectionDidSuggestStopVideo() {
+        console.log("video-logs", "connectionDidSuggestStopVideo");
+      },
+      audioVideoDidStartConnecting(reconnecting) {
+        console.log("video-logs", "audioVideoDidStartConnecting", {
+          reconnecting,
+        });
+      },
       metricsDidReceive(clientMetricReport) {
         const now = Date.now();
+
+        const availableOutgoingBitrate =
+          clientMetricReport.getObservableMetricValue(
+            "availableOutgoingBitrate",
+          );
+        const availableIncomingBitrate =
+          clientMetricReport.getObservableMetricValue(
+            "availableIncomingBitrate",
+          );
+        const audioPacketLossPercent =
+          clientMetricReport.getObservableMetricValue(
+            "audioPacketLossPercent",
+          ) || 0;
+
+        console.log("video-logs", "client metric report", {
+          uploadBandwidthKbps: availableOutgoingBitrate / 1000,
+          downloadBandwidthKbps: availableIncomingBitrate / 1000,
+          audioPacketLossPercent,
+        });
 
         const detectedNetworkQuality = detectNetworkQuality(clientMetricReport);
         // Apply bandwidth adjustment to every 5 seconds
@@ -371,7 +404,7 @@ function useMeetingEvents(enabled: boolean = true) {
              * Alternative considered: Debouncing mechanism
              * Rejected because: Added complexity without significant benefit
              */
-            console.log("Signaling dropped - connection issue", { attributes });
+            console.log("video-logs: signalingDropped", { attributes });
             break;
 
           case "meetingReconnected":
@@ -383,7 +416,7 @@ function useMeetingEvents(enabled: boolean = true) {
              * - Multiple reconnections: Set to 'fair' (unstable connection)
              * - Reset counter after 60 seconds of stability
              */
-            console.log("Meeting reconnected successfully", { attributes });
+            console.log("video-logs: meetingReconnected", { attributes });
             break;
 
           case "sendingAudioFailed":
@@ -407,7 +440,10 @@ function useMeetingEvents(enabled: boolean = true) {
              * - Unlike network issues, audio problems don't self-resolve
              * - User needs to take manual action to fix the issue
              */
-            console.log("Audio input failed", { name, attributes });
+            console.log("video-logs: Audio input failed", {
+              name,
+              attributes,
+            });
             break;
 
           case "sendingAudioRecovered":
@@ -423,7 +459,7 @@ function useMeetingEvents(enabled: boolean = true) {
              * No UI update needed: Audio recovery is handled automatically by SDK
              * Focus on analytics to understand user experience patterns
              */
-            console.log("Audio sending recovered", { attributes });
+            console.log("video-logs: sendingAudioRecovered", { attributes });
             break;
 
           default:
@@ -590,14 +626,14 @@ const detectNetworkQuality = (clientMetricReport: {
   }
 
   // Log scoring components for debugging
-  console.log("video-logs", "Network scoring", {
-    uploadBandwidthKbps,
-    audioPacketLossPercent,
-    bandwidthScore,
-    packetLossPenalty,
-    finalScore,
-    quality,
-  });
+  // console.log("video-logs", "Network scoring", {
+  //   uploadBandwidthKbps,
+  //   audioPacketLossPercent,
+  //   bandwidthScore,
+  //   packetLossPenalty,
+  //   finalScore,
+  //   quality,
+  // });
 
   return quality;
 };
