@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import {
   AudioInputControl,
   AudioOutputControl,
@@ -338,7 +344,7 @@ function useMeetingEvents(enabled: boolean = true) {
          * 3. Graceful handling of connection state transitions
          */
         switch (name) {
-          case 'signalingDropped':
+          case "signalingDropped":
             /**
              * SIGNALING DROPPED EVENT HANDLING
              *
@@ -365,10 +371,10 @@ function useMeetingEvents(enabled: boolean = true) {
              * Alternative considered: Debouncing mechanism
              * Rejected because: Added complexity without significant benefit
              */
-            console.log('Signaling dropped - connection issue', { attributes });
+            console.log("Signaling dropped - connection issue", { attributes });
             break;
 
-          case 'meetingReconnected':
+          case "meetingReconnected":
             /**
              * MEETING RECONNECTED EVENT HANDLING
              *
@@ -377,11 +383,11 @@ function useMeetingEvents(enabled: boolean = true) {
              * - Multiple reconnections: Set to 'fair' (unstable connection)
              * - Reset counter after 60 seconds of stability
              */
-            console.log('Meeting reconnected successfully', { attributes });
+            console.log("Meeting reconnected successfully", { attributes });
             break;
 
-          case 'sendingAudioFailed':
-          case 'audioInputFailed':
+          case "sendingAudioFailed":
+          case "audioInputFailed":
             /**
              * AUDIO INPUT FAILURE HANDLING
              *
@@ -401,10 +407,10 @@ function useMeetingEvents(enabled: boolean = true) {
              * - Unlike network issues, audio problems don't self-resolve
              * - User needs to take manual action to fix the issue
              */
-            console.log('Audio input failed', { name, attributes });
+            console.log("Audio input failed", { name, attributes });
             break;
 
-          case 'sendingAudioRecovered':
+          case "sendingAudioRecovered":
             /**
              * AUDIO RECOVERY EVENT TRACKING
              *
@@ -417,7 +423,7 @@ function useMeetingEvents(enabled: boolean = true) {
              * No UI update needed: Audio recovery is handled automatically by SDK
              * Focus on analytics to understand user experience patterns
              */
-            console.log('Audio sending recovered', { attributes });
+            console.log("Audio sending recovered", { attributes });
             break;
 
           default:
@@ -454,7 +460,7 @@ function useMeetingEvents(enabled: boolean = true) {
         console.log(`Meeting event: ${name}`, { attributes });
       },
     }),
-    []
+    [],
   );
 
   useEffect(() => {
