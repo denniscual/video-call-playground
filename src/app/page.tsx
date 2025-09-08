@@ -11,6 +11,9 @@ import { DeleteMeetingButton } from "@/components/delete-meeting-button";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+// TODO:
+// - the supabase credential including the project url and api key got exposed in the git commit history.
+//   WE must generate new api key.
 export default async function Home() {
   const meetings = await getAllMeetings();
 
