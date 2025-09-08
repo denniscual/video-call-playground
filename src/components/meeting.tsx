@@ -318,6 +318,15 @@ function useAudioVideoEvents(enabled: boolean = true) {
           reconnecting,
         });
       },
+      connectionHealthDidChange(connectionHealthData) {
+        console.log("video-logs", "connectionHealthDidChange", {
+          lastGoodSignalTimestamp:
+            connectionHealthData.lastGoodSignalTimestampMs,
+          lastNoSignalTimestamp: connectionHealthData.lastNoSignalTimestampMs,
+          lastPacketLoss: connectionHealthData.lastPacketLossInboundTimestampMs,
+          lastWeakSignal: connectionHealthData.lastWeakSignalTimestampMs,
+        });
+      },
       metricsDidReceive(clientMetricReport) {
         const now = Date.now();
 
