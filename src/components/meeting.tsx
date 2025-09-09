@@ -335,6 +335,8 @@ function useAudioVideoEvents(enabled: boolean = true) {
           lastNoSignalTimestamp: connectionHealthData.lastNoSignalTimestampMs,
           lastPacketLoss: connectionHealthData.lastPacketLossInboundTimestampMs,
           lastWeakSignal: connectionHealthData.lastWeakSignalTimestampMs,
+          isWeakSignalRecent: connectionHealthData.isWeakSignalRecent(5000),
+          isNoSignalRecent: connectionHealthData.isWeakSignalRecent(12000),
         });
       },
       metricsDidReceive(clientMetricReport) {
