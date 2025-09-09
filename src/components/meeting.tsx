@@ -73,6 +73,10 @@ function MeetingSessionContent({
   const { tiles } = useRemoteVideoTileState();
   const [error, setError] = useState<string>("");
 
+  console.log("video-logs", {
+    meetingStatus,
+  });
+
   // Get the audio events observer enabled state from sessionStorage
   const [audioEventsEnabled] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
