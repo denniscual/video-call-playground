@@ -308,6 +308,9 @@ function useAudioVideoEvents(enabled: boolean = true) {
     if (!meetingManager.meetingSession || !enabled) return;
 
     const audioVideoObserver: AudioVideoObserver = {
+      audioVideoDidStart() {
+        console.log("video-logs", "audioVideoDidStart");
+      },
       connectionDidBecomeGood() {
         console.log("video-logs", "connectionDidBecomeGood");
       },
@@ -390,6 +393,14 @@ function useMeetingEvents(enabled: boolean = true) {
          * 3. Graceful handling of connection state transitions
          */
         switch (name) {
+          case "meetingStartRequested": {
+            console.log("video-logs: meetingStartRequested", { attributes });
+            break;
+          }
+          case "meetingStartSucceeded": {
+            console.log("video-logs: meetingStartSucceeded", { attributes });
+            break;
+          }
           case "receivingAudioDropped": {
             console.log("video-logs: receivingAudioDropped", { attributes });
             break;
