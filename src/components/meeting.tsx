@@ -311,6 +311,9 @@ function useAudioVideoEvents(enabled: boolean = true) {
       audioVideoDidStart() {
         console.log("video-logs", "audioVideoDidStart");
       },
+      audioVideoDidStop() {
+        console.log("video-logs", "audioVideoDidStop");
+      },
       connectionDidBecomeGood() {
         console.log("video-logs", "connectionDidBecomeGood");
       },
@@ -350,11 +353,11 @@ function useAudioVideoEvents(enabled: boolean = true) {
             "audioPacketLossPercent",
           ) || 0;
 
-        // console.log("video-logs", "client metric report", {
-        //   uploadBandwidthKbps: availableOutgoingBitrate / 1000,
-        //   downloadBandwidthKbps: availableIncomingBitrate / 1000,
-        //   audioPacketLossPercent,
-        // });
+        console.log("video-logs", "client metric report", {
+          uploadBandwidthKbps: availableOutgoingBitrate / 1000,
+          downloadBandwidthKbps: availableIncomingBitrate / 1000,
+          audioPacketLossPercent,
+        });
 
         const detectedNetworkQuality = detectNetworkQuality(clientMetricReport);
         // Apply bandwidth adjustment to every 5 seconds
