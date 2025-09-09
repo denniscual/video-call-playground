@@ -329,15 +329,15 @@ function useAudioVideoEvents(enabled: boolean = true) {
         });
       },
       connectionHealthDidChange(connectionHealthData) {
-        console.log("video-logs", "connectionHealthDidChange", {
-          lastGoodSignalTimestamp:
-            connectionHealthData.lastGoodSignalTimestampMs,
-          lastNoSignalTimestamp: connectionHealthData.lastNoSignalTimestampMs,
-          lastPacketLoss: connectionHealthData.lastPacketLossInboundTimestampMs,
-          lastWeakSignal: connectionHealthData.lastWeakSignalTimestampMs,
-          isWeakSignalRecent: connectionHealthData.isWeakSignalRecent(5000),
-          isNoSignalRecent: connectionHealthData.isNoSignalRecent(10000),
-        });
+        // console.log("video-logs", "connectionHealthDidChange", {
+        //   lastGoodSignalTimestamp:
+        //     connectionHealthData.lastGoodSignalTimestampMs,
+        //   lastNoSignalTimestamp: connectionHealthData.lastNoSignalTimestampMs,
+        //   lastPacketLoss: connectionHealthData.lastPacketLossInboundTimestampMs,
+        //   lastWeakSignal: connectionHealthData.lastWeakSignalTimestampMs,
+        //   isWeakSignalRecent: connectionHealthData.isWeakSignalRecent(5000),
+        //   isNoSignalRecent: connectionHealthData.isNoSignalRecent(10000),
+        // });
       },
       metricsDidReceive(clientMetricReport) {
         const now = Date.now();
