@@ -386,91 +386,28 @@ function useMeetingEvents(enabled: boolean = true) {
          * 3. Graceful handling of connection state transitions
          */
         switch (name) {
+          case "receivingAudioDropped": {
+            console.log("video-logs: receivingAudioDropped", { attributes });
+            break;
+          }
           case "signalingDropped":
-            /**
-             * SIGNALING DROPPED EVENT HANDLING
-             *
-             * Problem: Amazon Chime SDK fires 'signalingDropped' events frequently during:
-             * - Brief network hiccups (1-2 seconds)
-             * - WiFi handoffs between access points
-             * - Mobile network switching (4G/5G/WiFi)
-             * - Temporary ISP routing issues
-             *
-             * Without delay: UI constantly flickers between connected/disconnected states,
-             * creating poor user experience and false alarms.
-             *
-             * Solution: 2-second delay before updating UI state
-             * - Most temporary network issues resolve within 1-2 seconds
-             * - Real connection problems persist longer than 2 seconds
-             * - Prevents false positive disconnection notifications
-             * - Aligns with our ConnectionHealthPolicyConfiguration thresholds
-             *
-             * Trade-offs:
-             * ✅ Stable UI experience, no flickering
-             * ✅ Reduces false alarms and user anxiety
-             * ❌ 2-second delay in showing real disconnections
-             *
-             * Alternative considered: Debouncing mechanism
-             * Rejected because: Added complexity without significant benefit
-             */
             console.log("video-logs: signalingDropped", { attributes });
             break;
 
           case "meetingReconnected":
-            /**
-             * MEETING RECONNECTED EVENT HANDLING
-             *
-             * Enhanced logic to detect connection stability patterns:
-             * - Single reconnection: Set to 'good' (normal recovery)
-             * - Multiple reconnections: Set to 'fair' (unstable connection)
-             * - Reset counter after 60 seconds of stability
-             */
             console.log("video-logs: meetingReconnected", { attributes });
             break;
 
           case "sendingAudioFailed":
           case "audioInputFailed":
-            /**
-             * AUDIO INPUT FAILURE HANDLING
-             *
-             * Problem: Audio failures can occur due to:
-             * - Microphone permissions revoked during call
-             * - Hardware issues (USB mic disconnected)
-             * - Browser audio context suspended
-             * - System audio driver issues
-             *
-             * Solution: Persistent warning with actionable guidance
-             * - ignoreDuration: true - Keeps warning visible until user acts
-             * - Provides clear instructions for resolution
-             * - Offers direct path to settings for quick fix
-             *
-             * Design Decision: No setTimeout here because:
-             * - Audio failures require immediate user attention
-             * - Unlike network issues, audio problems don't self-resolve
-             * - User needs to take manual action to fix the issue
-             */
             console.log("video-logs: Audio input failed", {
               name,
               attributes,
             });
             break;
-
           case "sendingAudioRecovered":
-            /**
-             * AUDIO RECOVERY EVENT TRACKING
-             *
-             * Purpose: Monitor audio stability and recovery patterns
-             * - Helps identify how often users experience audio issues
-             * - Tracks effectiveness of our connection stability improvements
-             * - Provides data for optimizing audio failure thresholds
-             * - Enables proactive support for users with frequent audio issues
-             *
-             * No UI update needed: Audio recovery is handled automatically by SDK
-             * Focus on analytics to understand user experience patterns
-             */
             console.log("video-logs: sendingAudioRecovered", { attributes });
             break;
-
           default:
             /**
              * DEFAULT EVENT HANDLING
