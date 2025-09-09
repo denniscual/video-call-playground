@@ -329,13 +329,13 @@ function useAudioVideoEvents(enabled: boolean = true) {
         });
       },
       connectionHealthDidChange(connectionHealthData) {
-        // console.log("video-logs", "connectionHealthDidChange", {
-        //   lastGoodSignalTimestamp:
-        //     connectionHealthData.lastGoodSignalTimestampMs,
-        //   lastNoSignalTimestamp: connectionHealthData.lastNoSignalTimestampMs,
-        //   lastPacketLoss: connectionHealthData.lastPacketLossInboundTimestampMs,
-        //   lastWeakSignal: connectionHealthData.lastWeakSignalTimestampMs,
-        // });
+        console.log("video-logs", "connectionHealthDidChange", {
+          lastGoodSignalTimestamp:
+            connectionHealthData.lastGoodSignalTimestampMs,
+          lastNoSignalTimestamp: connectionHealthData.lastNoSignalTimestampMs,
+          lastPacketLoss: connectionHealthData.lastPacketLossInboundTimestampMs,
+          lastWeakSignal: connectionHealthData.lastWeakSignalTimestampMs,
+        });
       },
       metricsDidReceive(clientMetricReport) {
         const now = Date.now();
@@ -353,11 +353,11 @@ function useAudioVideoEvents(enabled: boolean = true) {
             "audioPacketLossPercent",
           ) || 0;
 
-        console.log("video-logs", "client metric report", {
-          uploadBandwidthKbps: availableOutgoingBitrate / 1000,
-          downloadBandwidthKbps: availableIncomingBitrate / 1000,
-          audioPacketLossPercent,
-        });
+        // console.log("video-logs", "client metric report", {
+        //   uploadBandwidthKbps: availableOutgoingBitrate / 1000,
+        //   downloadBandwidthKbps: availableIncomingBitrate / 1000,
+        //   audioPacketLossPercent,
+        // });
 
         const detectedNetworkQuality = detectNetworkQuality(clientMetricReport);
         // Apply bandwidth adjustment to every 5 seconds
