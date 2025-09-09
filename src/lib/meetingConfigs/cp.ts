@@ -132,9 +132,9 @@ const createStableConnectionConfig =
     const config = new ConnectionHealthPolicyConfiguration();
 
     // Increase thresholds to be less sensitive to temporary network issues
-    config.connectionUnhealthyThreshold = 50; // Default: 25, significant increase for stability
-    config.connectionWaitTimeMs = 15000; // Default: 10000, increased for better tolerance
-    config.noSignalThresholdTimeMs = 20000; // Default: 10000, much higher for stability
+    // config.connectionUnhealthyThreshold = 50; // Default: 25, significant increase for stability
+    // config.connectionWaitTimeMs = 15000; // Default: 10000, increased for better tolerance
+    // config.noSignalThresholdTimeMs = 20000; // Default: 10000, much higher for stability
 
     // Increase reconnection timeouts for better stability
     config.cooldownTimeMs = 30000; // Default: 60000, reduce to 30s for faster recovery
