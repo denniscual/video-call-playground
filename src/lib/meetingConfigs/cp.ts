@@ -136,31 +136,31 @@ const createStableConnectionConfig =
     // config.connectionWaitTimeMs = 15000; // Default: 10000, increased for better tolerance
     // config.noSignalThresholdTimeMs = 20000; // Default: 10000, much higher for stability
 
-    // Increase reconnection timeouts for better stability
-    config.cooldownTimeMs = 30000; // Default: 60000, reduce to 30s for faster recovery
-    config.maximumTimesToWarn = 5; // Default: 2, increase to 5 for more attempts
-
-    // Signal strength thresholds - moderate tolerance increases
-    config.goodSignalTimeMs = 18000; // Default: 15000, slight increase
-    config.oneBarWeakSignalTimeMs = 6000; // Default: 5000, slight increase
-    config.twoBarsTimeMs = 6000; // Default: 5000, slight increase
-    config.threeBarsTimeMs = 12000; // Default: 10000, moderate increase
-    config.fourBarsTimeMs = 22000; // Default: 20000, slight increase
-    config.fiveBarsTimeMs = 75000; // Default: 60000, moderate increase
-    config.zeroBarsNoSignalTimeMs = 6000; // Default: 5000, slight increase
-
-    // Packet loss tolerance
-    config.fractionalLoss = 0.4; // Default: 0.5, slightly more tolerant but not excessive
-    config.packetsExpected = 60; // Default: 50, moderate increase
-    config.pastSamplesToConsider = 18; // Default: 15, slight increase
-
-    // Adjust ping thresholds to be more stable
-    config.missedPongsLowerThreshold = 2; // Default: 1, slight increase
-    config.missedPongsUpperThreshold = 5; // Default: 4, moderate increase
-
-    // Audio sending configuration for better stability
-    config.sendingAudioFailureInitialWaitTimeMs = 4000; // Default: 3000, moderate increase
-    config.sendingAudioFailureSamplesToConsider = 3; // Default: 2, slight increase
+    // // Increase reconnection timeouts for better stability
+    // config.cooldownTimeMs = 30000; // Default: 60000, reduce to 30s for faster recovery
+    // config.maximumTimesToWarn = 5; // Default: 2, increase to 5 for more attempts
+    //
+    // // Signal strength thresholds - moderate tolerance increases
+    // config.goodSignalTimeMs = 18000; // Default: 15000, slight increase
+    // config.oneBarWeakSignalTimeMs = 6000; // Default: 5000, slight increase
+    // config.twoBarsTimeMs = 6000; // Default: 5000, slight increase
+    // config.threeBarsTimeMs = 12000; // Default: 10000, moderate increase
+    // config.fourBarsTimeMs = 22000; // Default: 20000, slight increase
+    // config.fiveBarsTimeMs = 75000; // Default: 60000, moderate increase
+    // config.zeroBarsNoSignalTimeMs = 6000; // Default: 5000, slight increase
+    //
+    // // Packet loss tolerance
+    // config.fractionalLoss = 0.4; // Default: 0.5, slightly more tolerant but not excessive
+    // config.packetsExpected = 60; // Default: 50, moderate increase
+    // config.pastSamplesToConsider = 18; // Default: 15, slight increase
+    //
+    // // Adjust ping thresholds to be more stable
+    // config.missedPongsLowerThreshold = 2; // Default: 1, slight increase
+    // config.missedPongsUpperThreshold = 5; // Default: 4, moderate increase
+    //
+    // // Audio sending configuration for better stability
+    // config.sendingAudioFailureInitialWaitTimeMs = 4000; // Default: 3000, moderate increase
+    // config.sendingAudioFailureSamplesToConsider = 3; // Default: 2, slight increase
 
     return config;
   };
