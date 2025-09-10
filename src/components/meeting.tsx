@@ -72,6 +72,36 @@ function MeetingSessionContent({
   const { isVideoEnabled } = useLocalVideo();
   const { tiles } = useRemoteVideoTileState();
   const [error, setError] = useState<string>("");
+  
+  // Connection stability warning state
+  const [showConnectionWarning, setShowConnectionWarning] = useState(false);
+  const connectionWarningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Helper functions for connection warning management
+  const scheduleConnectionWarning = () => {
+    // Clear any existing timeout first
+    if (connectionWarningTimeoutRef.current) {
+      clearTimeout(connectionWarningTimeoutRef.current);
+    }
+    
+    // Schedule warning to show after 5 seconds
+    connectionWarningTimeoutRef.current = setTimeout(() => {
+      setShowConnectionWarning(true);
+      connectionWarningTimeoutRef.current = null;
+    }, 5000);
+  };
+
+  const cancelConnectionWarning = () => {
+    if (connectionWarningTimeoutRef.current) {
+      clearTimeout(connectionWarningTimeoutRef.current);
+      connectionWarningTimeoutRef.current = null;
+    }
+    setShowConnectionWarning(false);
+  };
+
+  const dismissConnectionWarning = () => {
+    setShowConnectionWarning(false);
+  };
 
   console.log("video-logs", {
     meetingStatus,
@@ -86,8 +116,17 @@ function MeetingSessionContent({
     return true;
   });
 
-  useAudioVideoEvents(audioEventsEnabled);
-  useMeetingEvents(true);
+  useAudioVideoEvents(audioEventsEnabled, cancelConnectionWarning);
+  useMeetingEvents(true, scheduleConnectionWarning, cancelConnectionWarning);
+
+  // Cleanup connection warning timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (connectionWarningTimeoutRef.current) {
+        clearTimeout(connectionWarningTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Initialize meeting when component mounts
   useEffect(() => {
@@ -191,6 +230,37 @@ function MeetingSessionContent({
     );
   }
 
+  // Show reconnecting state when connection is being restored
+  if (meetingStatus === MeetingStatus.Reconnecting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+          <h1 className="text-2xl font-bold text-white">Reconnecting...</h1>
+          <p className="text-gray-300">
+            Your connection was interrupted. Attempting to reconnect...
+          </p>
+          <div className="space-y-1">
+            <p className="text-sm text-gray-400">
+              Connected as: {participantType === "host" ? "Host" : "Participant"}
+            </p>
+            <div className="space-y-0.5">
+              <p className="text-xs text-gray-500 font-mono">
+                Participant ID: {participantId}
+              </p>
+              <p className="text-xs text-gray-600 font-mono">
+                Chime Attendee ID: {attendee?.attendeeId}
+              </p>
+            </div>
+          </div>
+          <div className="text-xs text-orange-400 mt-4">
+            Please wait while we restore your connection...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-900">
       <div className="p-4">
@@ -255,6 +325,11 @@ function MeetingSessionContent({
           <div>Setting up meeting...</div>
         )}
       </div>
+      
+      {/* Connection Warning Overlay */}
+      {showConnectionWarning && (
+        <ConnectionWarningOverlay onDismiss={dismissConnectionWarning} />
+      )}
     </div>
   );
 }
@@ -299,7 +374,10 @@ function useEndCall(meetingId: string) {
   };
 }
 
-function useAudioVideoEvents(enabled: boolean = true) {
+function useAudioVideoEvents(
+  enabled: boolean = true,
+  cancelConnectionWarning: () => void
+) {
   const enhancedSelectVideoQuality = useEnhancedSelectVideoQuality();
   const lastBandwidthAdjustment = useRef(0);
   const meetingManager = useMeetingManager();
@@ -316,6 +394,8 @@ function useAudioVideoEvents(enabled: boolean = true) {
       },
       connectionDidBecomeGood() {
         console.log("video-logs", "connectionDidBecomeGood");
+        // Cancel warning - connection has recovered quickly
+        cancelConnectionWarning();
       },
       connectionDidBecomePoor() {
         console.log("video-logs", "connectionDidBecomePoor");
@@ -327,6 +407,8 @@ function useAudioVideoEvents(enabled: boolean = true) {
         console.log("video-logs", "audioVideoDidStartConnecting", {
           reconnecting,
         });
+        // Cancel warning - disconnection is in progress, different UI will show
+        cancelConnectionWarning();
       },
       connectionHealthDidChange(connectionHealthData) {
         // console.log("video-logs", "connectionHealthDidChange", {
@@ -380,10 +462,14 @@ function useAudioVideoEvents(enabled: boolean = true) {
         audioVideoObserver,
       );
     };
-  }, [meetingManager.meetingSession, enhancedSelectVideoQuality, enabled]);
+  }, [meetingManager.meetingSession, enhancedSelectVideoQuality, enabled, cancelConnectionWarning]);
 }
 
-function useMeetingEvents(enabled: boolean = true) {
+function useMeetingEvents(
+  enabled: boolean = true,
+  scheduleConnectionWarning: () => void,
+  cancelConnectionWarning: () => void
+) {
   const meetingManager = useMeetingManager();
 
   const meetingEventsObserver: EventObserver = useMemo(
@@ -408,14 +494,20 @@ function useMeetingEvents(enabled: boolean = true) {
           }
           case "receivingAudioDropped": {
             console.log("video-logs: receivingAudioDropped", { attributes });
+            // Schedule connection warning with 5-second delay
+            scheduleConnectionWarning();
             break;
           }
           case "signalingDropped":
             console.log("video-logs: signalingDropped", { attributes });
+            // Cancel warning - user is disconnecting, different UI will show
+            cancelConnectionWarning();
             break;
 
           case "meetingReconnected":
             console.log("video-logs: meetingReconnected", { attributes });
+            // Cancel warning - user has reconnected successfully
+            cancelConnectionWarning();
             break;
 
           case "sendingAudioFailed":
@@ -462,7 +554,7 @@ function useMeetingEvents(enabled: boolean = true) {
         console.log(`Meeting event: ${name}`, { attributes });
       },
     }),
-    [],
+    [scheduleConnectionWarning, cancelConnectionWarning],
   );
 
   useEffect(() => {
@@ -715,6 +807,43 @@ function MeetingConfigSelector() {
           ))}
         </SelectContent>
       </Select>
+    </div>
+  );
+}
+
+// Connection Warning Overlay Component
+function ConnectionWarningOverlay({ onDismiss }: { onDismiss: () => void }) {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-gray-800 border border-yellow-500 rounded-lg p-6 max-w-md mx-4 shadow-lg">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-gray-900 text-sm font-bold">!</span>
+          </div>
+          <h3 className="text-lg font-semibold text-white">
+            Connection Issue Detected
+          </h3>
+        </div>
+        
+        <p className="text-gray-300 mb-6">
+          Your internet connection appears to be unstable. This may affect call quality and cause audio or video interruptions.
+        </p>
+        
+        <div className="flex gap-3">
+          <button
+            onClick={onDismiss}
+            className="flex-1 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md font-medium transition-colors"
+          >
+            Got it
+          </button>
+          <button
+            onClick={() => window.location.reload()}
+            className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md font-medium transition-colors"
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
