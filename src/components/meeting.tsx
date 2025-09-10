@@ -43,6 +43,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   meetingConfigs,
   getMeetingConfigById,
@@ -263,6 +264,34 @@ function MeetingSessionContent({
 
   return (
     <div className="min-h-screen bg-gray-900">
+      {/* Connection Warning Alert */}
+      {showConnectionWarning && (
+        <Alert className="mx-4 mt-4 mb-0 bg-yellow-50 border-yellow-200 text-yellow-800">
+          <svg className="h-4 w-4 text-yellow-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <AlertDescription className="flex items-center justify-between">
+            <span>Your internet connection appears unstable. This may affect call quality.</span>
+            <div className="flex gap-2 ml-4">
+              <button
+                onClick={dismissConnectionWarning}
+                className="px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded border border-yellow-300 transition-colors"
+              >
+                Dismiss
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-2 py-1 text-xs bg-yellow-600 hover:bg-yellow-700 text-white rounded transition-colors"
+              >
+                Refresh
+              </button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+      
       <div className="p-4">
         <div className="mb-4 flex justify-between text-white">
           <div>
@@ -325,11 +354,6 @@ function MeetingSessionContent({
           <div>Setting up meeting...</div>
         )}
       </div>
-      
-      {/* Connection Warning Overlay */}
-      {showConnectionWarning && (
-        <ConnectionWarningOverlay onDismiss={dismissConnectionWarning} />
-      )}
     </div>
   );
 }
@@ -811,39 +835,3 @@ function MeetingConfigSelector() {
   );
 }
 
-// Connection Warning Overlay Component
-function ConnectionWarningOverlay({ onDismiss }: { onDismiss: () => void }) {
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 border border-yellow-500 rounded-lg p-6 max-w-md mx-4 shadow-lg">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-gray-900 text-sm font-bold">!</span>
-          </div>
-          <h3 className="text-lg font-semibold text-white">
-            Connection Issue Detected
-          </h3>
-        </div>
-        
-        <p className="text-gray-300 mb-6">
-          Your internet connection appears to be unstable. This may affect call quality and cause audio or video interruptions.
-        </p>
-        
-        <div className="flex gap-3">
-          <button
-            onClick={onDismiss}
-            className="flex-1 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md font-medium transition-colors"
-          >
-            Got it
-          </button>
-          <button
-            onClick={() => window.location.reload()}
-            className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md font-medium transition-colors"
-          >
-            Refresh
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
