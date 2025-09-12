@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DeleteMeetingButton } from "@/components/delete-meeting-button";
-import { ConnectionHealthConfigForm } from "@/components/connection-health-config-form";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -28,7 +27,6 @@ export default async function Home() {
               Create and manage your video call meetings
             </p>
           </div>
-          <ConnectionHealthConfigForm />
         </div>
 
         {/* AWS Chime Meeting Creation */}
