@@ -19,7 +19,7 @@ export const meetingConfigs: MeetingConfig[] = [
   {
     id: "meeting-config-custom",
     name: "Custom",
-    description: "Custom config with overridable connection health settings",
+    description: "Custom config",
     config: customConfig,
   },
 ];
