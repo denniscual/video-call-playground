@@ -1,13 +1,13 @@
 import { config as cpConfig } from "./cp";
-import { config as customConfig } from "./custom";
+import { config as defaultConfig } from "./default";
 import type { MeetingConfig } from "./types";
 
 export const meetingConfigs: MeetingConfig[] = [
   {
     id: "meeting-config-custom",
     name: "Custom",
-    description: "Custom config used by the app",
-    config: customConfig,
+    description: "Default config (AWS Chime)",
+    config: defaultConfig,
   },
   {
     id: "meeting-config-cp",
