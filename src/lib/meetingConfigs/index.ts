@@ -4,8 +4,8 @@ import type { MeetingConfig } from "./types";
 
 export const meetingConfigs: MeetingConfig[] = [
   {
-    id: "meeting-config-custom",
-    name: "Custom",
+    id: "meeting-config-default",
+    name: "Default",
     description: "Default config (AWS Chime)",
     config: defaultConfig,
   },
