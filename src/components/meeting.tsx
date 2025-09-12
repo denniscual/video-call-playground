@@ -49,6 +49,7 @@ import {
   getMeetingConfigById,
   DEFAULT_MEETING_CONFIG_ID,
 } from "@/lib/meetingConfigs";
+import { ConnectionHealthConfigForm } from "@/components/connection-health-config-form";
 
 export type ParticipantType = "host" | "non-host";
 
@@ -325,6 +326,7 @@ function MeetingSessionContent({
           <div className="flex items-center gap-4">
             <ToggleAudioEventsObserver />
             <MeetingConfigSelector />
+            <ConnectionHealthConfigFormForMeeting />
             <div className="text-sm text-green-400">Connected</div>
           </div>
         </div>
@@ -833,5 +835,25 @@ function MeetingConfigSelector() {
       </Select>
     </div>
   );
+}
+
+// Connection Health Config Form - Only visible when using Custom config
+function ConnectionHealthConfigFormForMeeting() {
+  const [selectedConfig] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return (
+        sessionStorage.getItem("selectedMeetingConfig") ||
+        DEFAULT_MEETING_CONFIG_ID
+      );
+    }
+    return DEFAULT_MEETING_CONFIG_ID;
+  });
+
+  // Only show the form when using the custom config
+  if (selectedConfig !== "meeting-config-custom") {
+    return null;
+  }
+
+  return <ConnectionHealthConfigForm />;
 }
 

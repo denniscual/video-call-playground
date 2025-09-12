@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DeleteMeetingButton } from "@/components/delete-meeting-button";
+import { ConnectionHealthConfigForm } from "@/components/connection-health-config-form";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -20,11 +21,14 @@ export default async function Home() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold">Video Call Playground</h1>
-          <p className="text-muted-foreground mt-2">
-            Create and manage your video call meetings
-          </p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold">Video Call Playground</h1>
+            <p className="text-muted-foreground mt-2">
+              Create and manage your video call meetings
+            </p>
+          </div>
+          <ConnectionHealthConfigForm />
         </div>
 
         {/* AWS Chime Meeting Creation */}
