@@ -17,71 +17,11 @@ export function config(args: MeetingConfigArgs): MeetingSessionConfiguration {
   );
 
   /**
-   * This is to avoid black screen when network was unstable
-   * So user will see the last frame and then it back to normal
-   */
-  meetingSessionConfiguration.keepLastFrameWhenPaused = true;
-
-  /**
    * Configure connection health policy with custom overrides
    * Uses AWS Chime defaults as baseline with user overrides from localStorage
    */
   meetingSessionConfiguration.connectionHealthPolicyConfiguration =
     createCustomConnectionConfig(args.customConnectionHealthConfig);
-
-  /**
-   * Configure reconnection parameters for better stability
-   */
-  meetingSessionConfiguration.reconnectTimeoutMs = 120000; // 2 minutes total reconnect timeout
-  meetingSessionConfiguration.reconnectFixedWaitMs = 2000; // 2 second fixed wait
-  meetingSessionConfiguration.reconnectShortBackOffMs = 1000; // 1 second short backoff
-  meetingSessionConfiguration.reconnectLongBackOffMs = 5000; // 5 second long backoff
-  meetingSessionConfiguration.connectionTimeoutMs = 20000; // 20 second connection timeout
-  meetingSessionConfiguration.attendeePresenceTimeoutMs = 30000; // 30 second presence timeout
-
-  /**
-   * ENHANCED SIMULCAST AND VIDEO POLICY CONFIGURATION
-   *
-   * Following AWS Chime SDK best practices for simulcast:
-   * - Enable simulcast for Chromium-based browsers
-   * - Use VideoPriorityBasedPolicy for intelligent layer switching
-   * - Configure proper video preferences for optimal quality adaptation
-   * - Server-side network adaptation with bandwidth probing
-   * - Conservative quality limits to prevent bandwidth issues
-   *
-   * This configuration:
-   * ✅ Enables proper simulcast with video preferences
-   * ✅ Maintains video stability across all network conditions
-   * ✅ Gracefully degrades quality instead of dropping streams
-   * ✅ Uses modern server-side adaptation
-   * ✅ Supports 54kbps (audio) to 1400kbps (HD video) range per AWS specs
-   *
-   * Reference: https://aws.github.io/amazon-chime-sdk-js/modules/simulcast.html
-   */
-
-  // Create optimized priority-based policy with stability improvements
-  const videoConfig = VideoPriorityBasedPolicyConfig.Default;
-
-  // Enable modern server-side network adaptation
-  videoConfig.serverSideNetworkAdaption =
-    ServerSideNetworkAdaption.BandwidthProbing;
-
-  const logger = new ConsoleLogger("AWS Chime Adaptive Video");
-  const adaptiveVideoPolicy = new VideoPriorityBasedPolicy(logger, videoConfig);
-
-  /**
-   * Configure video uplink with bandwidth limits for stability
-   * Increase bandwidth to reduce quality switching
-   */
-  const uplinkPolicy = new NScaleVideoUplinkBandwidthPolicy("AWS Chime Uplink");
-  uplinkPolicy.setIdealMaxBandwidthKbps(1200); // Increased from 1000 for better stability
-
-  // Apply browser-specific simulcast configuration
-  enableSimulcast(meetingSessionConfiguration);
-
-  meetingSessionConfiguration.videoDownlinkBandwidthPolicy =
-    adaptiveVideoPolicy;
-  meetingSessionConfiguration.videoUplinkBandwidthPolicy = uplinkPolicy;
 
   return meetingSessionConfiguration;
 }
