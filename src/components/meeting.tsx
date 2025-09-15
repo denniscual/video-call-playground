@@ -74,7 +74,7 @@ function MeetingSessionContent({
   const { isVideoEnabled } = useLocalVideo();
   const { tiles } = useRemoteVideoTileState();
   const [error, setError] = useState<string>("");
-  
+
   // Connection stability warning state
   const [showConnectionWarning, setShowConnectionWarning] = useState(false);
   const connectionWarningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -85,7 +85,7 @@ function MeetingSessionContent({
     if (connectionWarningTimeoutRef.current) {
       clearTimeout(connectionWarningTimeoutRef.current);
     }
-    
+
     // Schedule warning to show after 5 seconds
     connectionWarningTimeoutRef.current = setTimeout(() => {
       setShowConnectionWarning(true);
@@ -244,7 +244,8 @@ function MeetingSessionContent({
           </p>
           <div className="space-y-1">
             <p className="text-sm text-gray-400">
-              Connected as: {participantType === "host" ? "Host" : "Participant"}
+              Connected as:{" "}
+              {participantType === "host" ? "Host" : "Participant"}
             </p>
             <div className="space-y-0.5">
               <p className="text-xs text-gray-500 font-mono">
@@ -268,13 +269,22 @@ function MeetingSessionContent({
       {/* Connection Warning Alert */}
       {showConnectionWarning && (
         <Alert className="mx-4 mt-4 mb-0 bg-yellow-50 border-yellow-200 text-yellow-800">
-          <svg className="h-4 w-4 text-yellow-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          <svg
+            className="h-4 w-4 text-yellow-600"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
           <AlertDescription className="flex items-center justify-between">
-            <span>Your internet connection appears unstable. This may affect call quality.</span>
+            <span>
+              Your internet connection appears unstable. This may affect call
+              quality.
+            </span>
             <div className="flex gap-2 ml-4">
               <button
                 onClick={dismissConnectionWarning}
@@ -292,7 +302,7 @@ function MeetingSessionContent({
           </AlertDescription>
         </Alert>
       )}
-      
+
       <div className="p-4">
         <div className="mb-4 flex justify-between text-white">
           <div>
@@ -402,11 +412,12 @@ function useEndCall(meetingId: string) {
 
 function useAudioVideoEvents(
   enabled: boolean = true,
-  cancelConnectionWarning: () => void
+  cancelConnectionWarning: () => void,
 ) {
   const enhancedSelectVideoQuality = useEnhancedSelectVideoQuality();
   const lastBandwidthAdjustment = useRef(0);
   const meetingManager = useMeetingManager();
+  const { isVideoEnabled } = useLocalVideo();
 
   useEffect(() => {
     if (!meetingManager.meetingSession || !enabled) return;
@@ -463,20 +474,23 @@ function useAudioVideoEvents(
             "audioPacketLossPercent",
           ) || 0;
 
-        // console.log("video-logs", "client metric report", {
-        //   uploadBandwidthKbps: availableOutgoingBitrate / 1000,
-        //   downloadBandwidthKbps: availableIncomingBitrate / 1000,
-        //   audioPacketLossPercent,
-        // });
+        console.log("video-logs", "client metric report", {
+          uploadBandwidthKbps: availableOutgoingBitrate / 1000,
+          downloadBandwidthKbps: availableIncomingBitrate / 1000,
+          audioPacketLossPercent,
+        });
 
-        const detectedNetworkQuality = detectNetworkQuality(clientMetricReport);
-        // Apply bandwidth adjustment to every 5 seconds
-        if (now - lastBandwidthAdjustment.current > 5000) {
-          adjustVideoQuality(
-            detectedNetworkQuality,
-            enhancedSelectVideoQuality,
-          );
-          lastBandwidthAdjustment.current = now;
+        if (isVideoEnabled) {
+          const detectedNetworkQuality =
+            detectNetworkQuality(clientMetricReport);
+          // Apply bandwidth adjustment to every 5 seconds
+          if (now - lastBandwidthAdjustment.current > 5000) {
+            adjustVideoQuality(
+              detectedNetworkQuality,
+              enhancedSelectVideoQuality,
+            );
+            lastBandwidthAdjustment.current = now;
+          }
         }
       },
     };
@@ -488,13 +502,18 @@ function useAudioVideoEvents(
         audioVideoObserver,
       );
     };
-  }, [meetingManager.meetingSession, enhancedSelectVideoQuality, enabled, cancelConnectionWarning]);
+  }, [
+    meetingManager.meetingSession,
+    enhancedSelectVideoQuality,
+    enabled,
+    cancelConnectionWarning,
+  ]);
 }
 
 function useMeetingEvents(
   enabled: boolean = true,
   scheduleConnectionWarning: () => void,
-  cancelConnectionWarning: () => void
+  cancelConnectionWarning: () => void,
 ) {
   const meetingManager = useMeetingManager();
 
@@ -856,4 +875,3 @@ function ConnectionHealthConfigFormForMeeting() {
 
   return <ConnectionHealthConfigForm />;
 }
-
