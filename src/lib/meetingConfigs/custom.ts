@@ -1,13 +1,7 @@
 import {
   ConnectionHealthPolicyConfiguration,
-  ConsoleLogger,
   MeetingSessionConfiguration,
-  NScaleVideoUplinkBandwidthPolicy,
-  ServerSideNetworkAdaption,
-  VideoPriorityBasedPolicy,
-  VideoPriorityBasedPolicyConfig,
 } from "amazon-chime-sdk-js";
-import browserDetect from "browser-detect";
 import { MeetingConfigArgs, CustomConnectionHealthConfig } from "./types";
 
 export function config(args: MeetingConfigArgs): MeetingSessionConfiguration {
@@ -124,21 +118,4 @@ const createCustomConnectionConfig = (
     defaults.sendingAudioFailureSamplesToConsider;
 
   return config;
-};
-
-/**
- * Configure simulcast based on browser compatibility
- * Simulcast is only supported on Chromium-based browsers (Chrome, Edge)
- * For other browsers, simulcast should be disabled.
- */
-const enableSimulcast = (config: MeetingSessionConfiguration) => {
-  const browserInfo = browserDetect();
-
-  if (browserInfo.name === "chrome" || browserInfo.name === "edge") {
-    // Enable simulcast for Chromium browsers
-    config.enableSimulcastForUnifiedPlanChromiumBasedBrowsers = true;
-  } else {
-    // Disable simulcast for non-Chromium browsers
-    config.enableSimulcastForUnifiedPlanChromiumBasedBrowsers = false;
-  }
 };
