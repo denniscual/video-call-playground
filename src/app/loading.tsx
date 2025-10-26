@@ -7,7 +7,7 @@ export default function Loading() {
         <div>
           <h1 className="text-3xl font-bold">Video Call Playground</h1>
           <p className="text-muted-foreground mt-2">
-            Create and manage your video call meetings
+            Create your video call meetings
           </p>
         </div>
         <div className="flex justify-center py-8">
